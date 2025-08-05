@@ -54,3 +54,22 @@ body {
     Inter Display,
     sans-serif;
 }
+
+.form-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.form-scrollbar::-webkit-scrollbar-track {
+  background: #1a1f24;
+}
+
+/* Handle */
+.form-scrollbar::-webkit-scrollbar-thumb {
+  background: #3b3f45;
+}
+
+/* Handle on hover */
+.form-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #5a5f66;
+}

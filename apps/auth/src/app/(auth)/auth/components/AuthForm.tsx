@@ -23,7 +23,7 @@ export const AuthForm = () => {
 
   const handleSignup = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const validate = validateSignup(authData); 
+    const validate = validateSignup(authData);
 
     const payload = {
       username: authData.username.trim(),
@@ -31,7 +31,7 @@ export const AuthForm = () => {
       password: authData.password.trim().replace(/\s/g, ""),
       ...(authData.bio.trim() && {
         bio: authData.bio.trim(),
-      }), 
+      }),
     };
 
     if (validate) {
@@ -88,8 +88,8 @@ export const AuthForm = () => {
   };
 
   return (
-    <>
-      <div className="bg-[#F0EFF2] w-[390px] px-1 mt-10 rounded-lg h-14 flex items-center justify-between">
+    <div className="py-4 relative">
+      <div className="flex items-center sticky top-0 left-0 bg-[#101516]  ">
         <button
           onClick={() => {
             if (!loading) {
@@ -97,10 +97,12 @@ export const AuthForm = () => {
             }
           }}
           className={` ${
-            activeTab === "signup" ? "bg-white" : "text-[#868686]"
-          }  cursor-pointer w-[169px]  py-3  my-[0.5px] font-medium rounded-lg`}
+            activeTab === "signup"
+              ? "bg-[#1E252A] text-white"
+              : "text-[#7A8288] "
+          }  cursor-pointer  py-2 px-4   rounded-[20px]`}
         >
-          signup
+          sign up
         </button>
         <button
           onClick={() => {
@@ -108,18 +110,23 @@ export const AuthForm = () => {
               setActiveTab("login");
             }
           }}
-          className={` w-[169px] ${
-            activeTab === "login" ? "bg-white" : "text-[#868686]"
-          } cursor-pointer py-3  my-[0.5px] font-medium rounded-lg `}
+          className={`  ${
+            activeTab === "login"
+              ? "bg-[#1E252A] text-white"
+              : "text-[#7A8288] "
+          } cursor-pointer  py-2 px-4    rounded-[20px]`}
         >
           login
         </button>
       </div>
-      <form className="flex flex-col mt-8 w-[390px]  gap-6">
+      <form className="flex flex-col mt-8  gap-6">
+        <h2 className="text-2xl font-medium text-white">Create account</h2>
         {activeTab === "signup" && (
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col gap-2 ">
-              <label htmlFor="username">Username</label>
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-2 w-full ">
+              <label htmlFor="username" className="text-[#A0A4A6]  ">
+                Username
+              </label>
               <input
                 type="text"
                 id="username"
@@ -127,17 +134,19 @@ export const AuthForm = () => {
                 onChange={(e) =>
                   setAuthData({ ...authData, username: e.target.value })
                 }
-                className="border-[#D9D9D9] outline-[#444CE7] placeholder:text-[#C4C4C4] placeholder-text-sm border-[0.5px] rounded-lg py-3 pl-3"
-                placeholder="Enter your username"
+                className="border-[#2D3438] outline-none bg-[#1A1F22]   placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
+                placeholder="Jamie donalds"
               />
             </div>
-            <div className="flex flex-col gap-2 ">
-              <label htmlFor="bio">Bio(optional)</label>
+            <div className="flex flex-col gap-2 w-full ">
+              <label htmlFor="bio" className="text-[#A0A4A6] ">
+                Bio
+              </label>
               <input
                 type="bio"
                 id="bio"
                 name="bio"
-                className="border-[#D9D9D9] outline-[#444CE7] placeholder-font-normal placeholder:text-[#C4C4C4] placeholder-text-sm border-[0.5px] rounded-lg py-3 pl-3"
+                className="border-[#2D3438] outline-none bg-[#1A1F22]   placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
                 placeholder="Enter your bio"
                 onChange={(e) =>
                   setAuthData({ ...authData, bio: e.target.value })
@@ -148,7 +157,9 @@ export const AuthForm = () => {
         )}
 
         <div className="flex flex-col gap-2 ">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email" className="text-[#A0A4A6] ">
+            Email
+          </label>
           <input
             type="email"
             id="email"
@@ -156,22 +167,47 @@ export const AuthForm = () => {
             onChange={(e) =>
               setAuthData({ ...authData, email: e.target.value })
             }
-            className="border-[#D9D9D9] outline-[#444CE7] placeholder:text-[#C4C4C4] placeholder-text-sm border-[0.5px] rounded-lg py-3 pl-3"
+            className="border-[#2D3438] outline-none bg-[#1A1F22]   placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
             placeholder="Enter your email"
           />
         </div>
-        <div className="flex flex-col gap-2 ">
-          <label htmlFor="email">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            onChange={(e) =>
-              setAuthData({ ...authData, password: e.target.value })
-            }
-            className="border-[#D9D9D9] outline-[#444CE7] placeholder:text-[#C4C4C4] placeholder-text-sm border-[0.5px] rounded-lg py-3 pl-3"
-            placeholder="Enter your password"
-          />
+
+        <div
+          className={`${activeTab === "signup" && "flex items-center gap-4"}`}
+        >
+          <div className="flex flex-col gap-2 w-full ">
+            <label htmlFor="email" className="text-[#A0A4A6] ">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              onChange={(e) =>
+                setAuthData({ ...authData, password: e.target.value })
+              }
+              className="border-[#2D3438] outline-none bg-[#1A1F22]   placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
+              placeholder="Enter your password"
+            />
+          </div>
+
+          {activeTab === "signup" && (
+            <div className="flex flex-col gap-2 w-full ">
+              <label htmlFor="email" className="text-[#A0A4A6] ">
+                Confirm password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                onChange={(e) =>
+                  setAuthData({ ...authData, password: e.target.value })
+                }
+                className="border-[#2D3438] outline-none bg-[#1A1F22]   placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
+                placeholder="Enter your password"
+              />
+            </div>
+          )}
         </div>
 
         {activeTab === "signup" ? (
@@ -187,16 +223,16 @@ export const AuthForm = () => {
               !authData.email.trim() ||
               !authData.password.trim() ||
               !authData.username.trim()
-                ? "bg-[#C4C4C4]"
+                ? "bg-[#2A3035]"
                 : "bg-[#444CE7]"
-            } cursor-pointer text-center disabled:cursor-not-allowed font-medium rounded-lg text-white py-4`}
+            } cursor-pointer text-center disabled:cursor-not-allowed font-medium rounded-lg text-white py-6`}
           >
             {loading ? (
               <div className="flex items-center justify-center">
                 <Generating />
               </div>
             ) : (
-              "signup"
+              "Create account"
             )}
           </button>
         ) : (
@@ -207,9 +243,9 @@ export const AuthForm = () => {
             }
             className={` ${
               !authData.email.trim() || !authData.password.trim()
-                ? "bg-[#C4C4C4]"
+                ? "bg-[#2A3035]"
                 : "bg-[#444CE7]"
-            } cursor-pointer disabled:cursor-not-allowed text-center font-medium rounded-lg text-white py-4`}
+            } cursor-pointer disabled:cursor-not-allowed text-center font-medium rounded-lg text-white py-6`}
           >
             {loading ? (
               <div className="flex items-center justify-center">
@@ -221,6 +257,6 @@ export const AuthForm = () => {
           </button>
         )}
       </form>
-    </>
+    </div>
   );
 };

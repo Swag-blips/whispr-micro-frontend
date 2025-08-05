@@ -4,10 +4,8 @@ import { Apple, Facebook } from "./components/icons";
 
 const AuthPage = () => {
   return (
-    <main className="grid grid-cols-2">
-      <section className="flex   flex-col flex-1  items-center justify-center">
-        <h2 className="font-medium text-3xl">Get started</h2>
-
+    <main className="bg-[#0A0E0F] h-screen flex items-center justify-center">
+      <section className="flex   flex-col w-[537px] max-h-[550px] overflow-y-auto form-scrollbar rounded-2xl bg-[#101516]  px-4">
         <AuthForm />
 
         <div className="flex items-center justify-center mt-6 w-[390px] gap-2">
@@ -27,16 +25,6 @@ const AuthPage = () => {
           <button>
             <Apple />
           </button>
-        </div>
-      </section>
-
-      <section className=" sticky right-0 top-0 ml-auto w-fit h-screen pl-auto ">
-        <div className=" h-[inherit]">
-          <img
-            src="https://res.cloudinary.com/dh3c9ay9z/image/upload/v1748957920/Banner_ji5s0q.png"
-            alt="Banner"
-            className=" h-full"
-          />
         </div>
       </section>
     </main>
