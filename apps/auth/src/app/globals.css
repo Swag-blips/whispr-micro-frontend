@@ -1,23 +1,30 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: "Satoshi";
-  src: url("/fonts/Satoshi-Bold.otf") format("opentype");
+  font-family: "Inter display";
+  src: url("/fonts/interDisplay-Bold.ttf") format("truetype");
   font-weight: 700;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Satoshi";
-  src: url("/fonts/Satoshi-Medium.otf") format("opentype");
+  font-family: "Inter display";
+  src: url("/fonts/InterDisplay-Medium.ttf") format("truetype");
   font-weight: 500;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Satoshi";
-  src: url("/fonts/Satoshi-Regular.otf") format("opentype");
+  font-family: "Inter display";
+  src: url("/fonts/InterDisplay-Regular.ttf") format("truetype");
   font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter display";
+  src: url("/fonts/InterDisplay-SemiBold.ttf") format("truetype");
+  font-weight: 600;
   font-display: swap;
 }
 
@@ -43,5 +50,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Satoshi, sans-serif;
+  font-family:
+    Inter Display,
+    sans-serif;
 }
