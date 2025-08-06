@@ -3,6 +3,7 @@ export interface RegisterPayload {
   password: string;
   username: string;
   bio?: string;
+  confirmPassword: String;
 }
 
 export interface RegisterResponse {

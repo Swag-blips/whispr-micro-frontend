@@ -1,4 +1,7 @@
-export { default as Apple } from "../icons/Apple";
-export { default as Facebook } from "../icons/Facebook";
-export { default as Google } from "../icons/Google";
-export { default as Generating } from "../icons/Generating";
+export { default as Apple } from "./Apple";
+export { default as Facebook } from "./Facebook";
+export { default as Google } from "./Google";
+export { default as Generating } from "./Generating";
+export { default as EyeOpen } from "./EyeOpen";
+export { default as EyeClosed } from "./EyeClosed";
+export { default as Error } from "./Error";

@@ -2,8 +2,6 @@
 import { Google } from "@/app/components/icons";
 import { useRouter } from "next/navigation";
 
-
-
 export const GoogleAuth = () => {
   const router = useRouter();
   const handleClick = () => {
@@ -17,7 +15,7 @@ export const GoogleAuth = () => {
   return (
     <button
       onClick={handleClick}
-      className="rounded-full cursor-pointer flex items-center justify-center w-12 h-12 text-[#C4C4C4] text-size-12 border-[0.5px] border-[#D9D9D9] "
+      className="rounded-lg cursor-pointer w-full flex items-center justify-center bg-[#1A1F22] h-12 text-[#C4C4C4] text-size-12 border-[1px] border-[#2D3438] "
     >
       <Google />
     </button>
