@@ -1,10 +1,13 @@
-import React from "react";
+type Props = {
+  width?: string;
+  height?: string;
+};
 
-const Error = () => {
+const Error = ({ width, height }: Props) => {
   return (
     <svg
-      width="25"
-      height="24"
+      width={width || "25"}
+      height={height || "24"}
       viewBox="0 0 25 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

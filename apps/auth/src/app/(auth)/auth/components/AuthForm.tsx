@@ -1,21 +1,32 @@
 "use client";
 
-import { act, useState } from "react";
+import { useState } from "react";
 import { validateSignup } from "../utils/validate";
-
 import toast from "react-hot-toast";
-
 import { login, register } from "../services/service";
 import { useRouter } from "next/navigation";
-import { Generating } from "@repo/ui/icons/Generating";
-import { Error as ErrorIcon, EyeClosed, EyeOpen } from "@/app/components/icons";
+import {
+  Error as ErrorIcon,
+  EyeClosed,
+  EyeOpen,
+  Loading,
+  Success,
+} from "@/app/components/icons";
+import { BioData } from "./BioData";
 
 type ActiveTab = "signup" | "login";
+export type AuthData = {
+  username: string;
+  bio: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 export const AuthForm = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("signup");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const [authData, setAuthData] = useState({
+  const [authData, setAuthData] = useState<AuthData>({
     username: "",
     bio: "",
     email: "",
@@ -39,29 +50,81 @@ export const AuthForm = () => {
       ...(authData.bio.trim() && {
         bio: authData.bio.trim(),
       }),
-      confirmPassword: authData.confirmPassword.trim().replace(/\s/g, ""),
     };
 
     if (validate.isValid) {
+      const toastId = toast("Creating account...", {
+        icon: <Loading />,
+        style: {
+          borderRadius: "12px",
+          background: "#1E1E1E",
+          color: "#EDEDED",
+          padding: "16px",
+          boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
+        },
+      });
+
       setLoading(true);
       try {
         const response = await register(payload);
 
-        if (response.success) { 
-          toast.success(response.message);
-          router.push("/verify-email");
+        if (response.success) {
+          toast(response.message, {
+            icon: <Success />,
+            style: {
+              borderRadius: "12px",
+              background: "#1E1E1E",
+              color: "#EDEDED",
+              padding: "16px",
+              boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
+            },
+            duration: 1000,
+          });
+
+          router.push(`/verify-email?email=${payload.email}`);
         } else if (!response.success && response.details) {
-          toast.error(response.details || "An error occured");
+          toast(response.details || "An error occured", {
+            icon: <ErrorIcon />,
+            style: {
+              borderRadius: "12px",
+              background: "#1E1E1E",
+              color: "#EDEDED",
+              padding: "16px",
+              boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
+            }, 
+            duration: 1500,
+          });
         } else {
-          toast.error(response.message);
+          toast(response.details || "An error occured", {
+            icon: <ErrorIcon />,
+            style: {
+              borderRadius: "12px",
+              background: "#1E1E1E",
+              color: "#EDEDED",
+              padding: "16px",
+              boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
+            },
+            duration: 1500,
+          });
         }
       } catch (error) {
         console.error(error);
         if (error instanceof Error) {
-          toast.error(error.message);
+          toast(error.message, {
+            icon: <ErrorIcon />,
+            style: {
+              borderRadius: "12px",
+              background: "#1E1E1E",
+              color: "#EDEDED",
+              padding: "16px",
+              boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
+            },
+            duration: 1500,
+          });
         }
       } finally {
         setLoading(false);
+        toast.dismiss(toastId);
       }
     } else {
       toast(validate.error, {
@@ -81,28 +144,73 @@ export const AuthForm = () => {
 
   const handleLogin = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setLoading(true);
+
     const payload = {
       email: authData.email.trim().replace(/\s/g, ""),
       password: authData.password.trim().replace(/\s/g, ""),
     };
+
+    const toastId = toast("logging in...", {
+      icon: <Loading />,
+      style: {
+        borderRadius: "12px",
+        background: "#1E1E1E",
+        color: "#EDEDED",
+        padding: "16px",
+        boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
+      },
+    });
+
     try {
+      setLoading(true);
+
       const response = await login(payload);
       if (response.success) {
-        toast.success(response.message);
+        toast(response.message, {
+          icon: <Success />,
+          style: {
+            borderRadius: "12px",
+            background: "#1E1E1E",
+            color: "#EDEDED",
+            padding: "16px",
+            boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
+          },
+          duration: 1000,
+        });
         router.push("/verify-otp?email=" + authData.email);
       } else if (!response.success && response.details) {
         toast.error(response.details || "An error occured");
       } else {
-        toast.error(response.message);
+        toast(response.message, {
+          icon: <ErrorIcon />,
+          style: {
+            borderRadius: "12px",
+            background: "#1E1E1E",
+            color: "#EDEDED",
+            padding: "16px",
+            boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
+          },
+          duration: 1500,
+        });
       }
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
-        toast.error(error.message);
+        toast(error.message, {
+          icon: <ErrorIcon />,
+          style: {
+            borderRadius: "12px",
+            background: "#1E1E1E",
+            color: "#EDEDED",
+            padding: "16px",
+            boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
+          },
+          duration: 1500,
+        });
       }
     } finally {
       setLoading(false);
+      toast.dismiss(toastId);
     }
   };
 
@@ -117,6 +225,16 @@ export const AuthForm = () => {
 
     setIsOpen(openState);
   };
+
+  const isSignUpActive =
+    !authData.email.trim() ||
+    !authData.username.trim() ||
+    !authData.password.trim() ||
+    !authData.confirmPassword.trim() ||
+    loading;
+
+  const isLoginActive =
+    !authData.email.trim() || !authData.password.trim() || loading;
 
   return (
     <>
@@ -155,38 +273,7 @@ export const AuthForm = () => {
           {activeTab === "signup" ? "Create account" : "Login"}
         </h2>
         {activeTab === "signup" && (
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col gap-2 w-full ">
-              <label htmlFor="username" className="text-[#A0A4A6]  ">
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                onChange={(e) =>
-                  setAuthData({ ...authData, username: e.target.value })
-                }
-                className="border-[#2D3438] outline-none bg-[#1A1F22]   placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
-                placeholder="Jamie donalds"
-              />
-            </div>
-            <div className="flex flex-col gap-2 w-full ">
-              <label htmlFor="bio" className="text-[#A0A4A6] ">
-                Bio
-              </label>
-              <input
-                type="bio"
-                id="bio"
-                name="bio"
-                className="border-[#2D3438] outline-none bg-[#1A1F22]   placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
-                placeholder="Enter your bio"
-                onChange={(e) =>
-                  setAuthData({ ...authData, bio: e.target.value })
-                }
-              />
-            </div>
-          </div>
+          <BioData setAuthData={setAuthData} authData={authData} />
         )}
 
         <div className="flex flex-col gap-2 ">
@@ -273,47 +360,22 @@ export const AuthForm = () => {
         {activeTab === "signup" ? (
           <button
             onClick={handleSignup}
-            disabled={
-              !authData.email.trim() ||
-              !authData.username.trim() ||
-              !authData.password.trim() ||
-              loading
-            }
+            disabled={isSignUpActive}
             className={` ${
-              !authData.email.trim() ||
-              !authData.password.trim() ||
-              !authData.username.trim()
-                ? "bg-[#2A3035]"
-                : "bg-[#444CE7]"
+              isSignUpActive ? "bg-[#2A3035]" : "bg-[#444CE7]"
             } cursor-pointer text-center disabled:cursor-not-allowed font-medium rounded-lg text-white py-6`}
           >
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <Generating />
-              </div>
-            ) : (
-              "Create account"
-            )}
+            Create account
           </button>
         ) : (
           <button
             onClick={handleLogin}
-            disabled={
-              !authData.email.trim() || !authData.password.trim() || loading
-            }
+            disabled={isLoginActive}
             className={` ${
-              !authData.email.trim() || !authData.password.trim()
-                ? "bg-[#2A3035]"
-                : "bg-[#444CE7]"
+              isLoginActive ? "bg-[#2A3035]" : "bg-[#444CE7]"
             } cursor-pointer disabled:cursor-not-allowed text-center font-medium rounded-lg text-white py-6`}
           >
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <Generating />
-              </div>
-            ) : (
-              "Login"
-            )}
+            Login
           </button>
         )}
       </form>

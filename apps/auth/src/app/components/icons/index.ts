@@ -5,3 +5,6 @@ export { default as Generating } from "./Generating";
 export { default as EyeOpen } from "./EyeOpen";
 export { default as EyeClosed } from "./EyeClosed";
 export { default as Error } from "./Error";
+export { default as Loading } from "./Loading";
+export { default as Success } from "./Success";
+export { default as ArrowLeft } from "./ArrowLeft";

@@ -4,7 +4,7 @@ export const validateSignup = (payload: RegisterPayload) => {
   const trimmed = {
     email: payload.email.trim(),
     password: payload.password.trim(),
-    confirmPassword: payload.confirmPassword.trim(),
+    confirmPassword: payload.confirmPassword?.trim(),
     username: payload.username.trim(),
   };
 
