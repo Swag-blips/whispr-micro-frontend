@@ -10,9 +10,9 @@ const AuthPage = () => {
 
         <div className="flex items-center justify-center mt-8 gap-2">
           <hr className="border-[#2D3438] border w-full" />
-
+ 
           <span className="text-[#A0A4A6] text-sm text-nowrap">
-            OR SIGN IN WITH
+            OR SIGN IN WITH 
           </span>
 
           <hr className="border-[#2D3438] border w-full " />

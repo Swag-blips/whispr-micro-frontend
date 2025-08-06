@@ -54,31 +54,46 @@ export const AuthForm = () => {
     };
 
     if (validate.isValid) {
-      const toastId = toastComponent.loading("Creating account...");
+      const toastId = toastComponent.loading(
+        "Creating account...",
+        <Loading />
+      );
       setLoading(true);
       try {
         const response = await register(payload);
 
         if (response.success) {
-          toastComponent.success(response.message, 1000);
+          toastComponent.success(response.message, <Success />, 1000);
 
           router.push(`/verify-email?email=${payload.email}`);
         } else if (!response.success && response.details) {
-          toastComponent.error(response.details || "An error occured", 1500);
+          toastComponent.error(
+            response.details || "An error occured",
+            <ErrorIcon />,
+            1500
+          );
         } else {
-          toastComponent.error(response.details || "An error occured", 1500);
+          toastComponent.error(
+            response.details || "An error occured",
+            <ErrorIcon />,
+            1500
+          );
         }
       } catch (error) {
         console.error(error);
         if (error instanceof Error) {
-          toastComponent.error(error.message || "An error occured", 1500);
+          toastComponent.error(
+            error.message || "An error occured",
+            <ErrorIcon />,
+            1500
+          );
         }
       } finally {
         setLoading(false);
         toast.dismiss(toastId);
       }
     } else {
-      toastComponent.error(validate.error, 1500);
+      toastComponent.error(validate.error, <ErrorIcon />, 1500);
       return;
     }
   };
@@ -91,24 +106,38 @@ export const AuthForm = () => {
       password: authData.password.trim().replace(/\s/g, ""),
     };
 
-    const toastId = toastComponent.loading("Logging in...");
+    const toastId = toastComponent.loading("Logging in...", <Loading />);
 
     try {
       setLoading(true);
 
       const response = await login(payload);
+      console.log("response", response);
+
       if (response.success) {
-        toastComponent.success(response.message);
+        toastComponent.success(response.message, <Success />);
         router.push("/verify-otp?email=" + authData.email);
       } else if (!response.success && response.details) {
-        toastComponent.error(response.details || "An error occured", 1500);
+        toastComponent.error(
+          response.details || "An error occured",
+          <ErrorIcon />,
+          1500
+        );
       } else {
-        toastComponent.error(response.details || "An error occured", 1500);
+        toastComponent.error(
+          response.message || "An error occured",
+          <ErrorIcon />,
+          1500
+        );
       }
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
-        toastComponent.error(error.message || "An error occured", 1500);
+        toastComponent.error(
+          error.message || "An error occured",
+          <ErrorIcon />,
+          1500
+        );
       }
     } finally {
       setLoading(false);
@@ -137,6 +166,8 @@ export const AuthForm = () => {
 
   const isLoginActive =
     !authData.email.trim() || !authData.password.trim() || loading;
+
+  console.log("authData", authData);
 
   return (
     <>
@@ -185,6 +216,7 @@ export const AuthForm = () => {
           <input
             type="email"
             id="email"
+            value={authData.email}
             name="email"
             onChange={(e) =>
               setAuthData({ ...authData, email: e.target.value })
@@ -207,6 +239,7 @@ export const AuthForm = () => {
                 type={isOpen["password"] ? "text" : "password"}
                 id="password"
                 name="password"
+                value={authData.password}
                 onChange={(e) =>
                   setAuthData({ ...authData, password: e.target.value })
                 }
@@ -236,6 +269,7 @@ export const AuthForm = () => {
                   type={isOpen["confirmPassword"] ? "text" : "password"}
                   id="confirmPassword"
                   name="confirmPassword"
+                  value={authData.confirmPassword}
                   onChange={(e) =>
                     setAuthData({
                       ...authData,

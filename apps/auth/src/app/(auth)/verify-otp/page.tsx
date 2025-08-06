@@ -8,12 +8,12 @@ import OtpInputs from "./components/OtpInputs";
 const OtpPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ token: string }>;
+  searchParams: Promise<{ email: string }>;
 }) => {
-  const email = await searchParams?.then((param) => param.token);
+  const email = await searchParams?.then((param) => param.email);
 
   if (!email) {
-    redirect("/auth");
+    redirect("/");
   }
   return (
     <div className="">
