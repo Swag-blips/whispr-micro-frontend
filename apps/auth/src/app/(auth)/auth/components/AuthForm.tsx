@@ -13,6 +13,7 @@ import {
   Success,
 } from "@/app/components/icons";
 import { BioData } from "./BioData";
+import { toastComponent } from "../utils/toast";
 
 type ActiveTab = "signup" | "login";
 export type AuthData = {
@@ -53,91 +54,31 @@ export const AuthForm = () => {
     };
 
     if (validate.isValid) {
-      const toastId = toast("Creating account...", {
-        icon: <Loading />,
-        style: {
-          borderRadius: "12px",
-          background: "#1E1E1E",
-          color: "#EDEDED",
-          padding: "16px",
-          boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-        },
-      });
-
+      const toastId = toastComponent.loading("Creating account...");
       setLoading(true);
       try {
         const response = await register(payload);
 
         if (response.success) {
-          toast(response.message, {
-            icon: <Success />,
-            style: {
-              borderRadius: "12px",
-              background: "#1E1E1E",
-              color: "#EDEDED",
-              padding: "16px",
-              boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-            },
-            duration: 1000,
-          });
+          toastComponent.success(response.message, 1000);
 
           router.push(`/verify-email?email=${payload.email}`);
         } else if (!response.success && response.details) {
-          toast(response.details || "An error occured", {
-            icon: <ErrorIcon />,
-            style: {
-              borderRadius: "12px",
-              background: "#1E1E1E",
-              color: "#EDEDED",
-              padding: "16px",
-              boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-            }, 
-            duration: 1500,
-          });
+          toastComponent.error(response.details || "An error occured", 1500);
         } else {
-          toast(response.details || "An error occured", {
-            icon: <ErrorIcon />,
-            style: {
-              borderRadius: "12px",
-              background: "#1E1E1E",
-              color: "#EDEDED",
-              padding: "16px",
-              boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-            },
-            duration: 1500,
-          });
+          toastComponent.error(response.details || "An error occured", 1500);
         }
       } catch (error) {
         console.error(error);
         if (error instanceof Error) {
-          toast(error.message, {
-            icon: <ErrorIcon />,
-            style: {
-              borderRadius: "12px",
-              background: "#1E1E1E",
-              color: "#EDEDED",
-              padding: "16px",
-              boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-            },
-            duration: 1500,
-          });
+          toastComponent.error(error.message || "An error occured", 1500);
         }
       } finally {
         setLoading(false);
         toast.dismiss(toastId);
       }
     } else {
-      toast(validate.error, {
-        icon: <ErrorIcon />,
-        style: {
-          borderRadius: "12px",
-          background: "#1E1E1E",
-          color: "#EDEDED",
-          padding: "16px",
-          boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-        },
-        duration: 1500,
-      });
+      toastComponent.error(validate.error, 1500);
       return;
     }
   };
@@ -150,63 +91,24 @@ export const AuthForm = () => {
       password: authData.password.trim().replace(/\s/g, ""),
     };
 
-    const toastId = toast("logging in...", {
-      icon: <Loading />,
-      style: {
-        borderRadius: "12px",
-        background: "#1E1E1E",
-        color: "#EDEDED",
-        padding: "16px",
-        boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-      },
-    });
+    const toastId = toastComponent.loading("Logging in...");
 
     try {
       setLoading(true);
 
       const response = await login(payload);
       if (response.success) {
-        toast(response.message, {
-          icon: <Success />,
-          style: {
-            borderRadius: "12px",
-            background: "#1E1E1E",
-            color: "#EDEDED",
-            padding: "16px",
-            boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-          },
-          duration: 1000,
-        });
+        toastComponent.success(response.message);
         router.push("/verify-otp?email=" + authData.email);
       } else if (!response.success && response.details) {
-        toast.error(response.details || "An error occured");
+        toastComponent.error(response.details || "An error occured", 1500);
       } else {
-        toast(response.message, {
-          icon: <ErrorIcon />,
-          style: {
-            borderRadius: "12px",
-            background: "#1E1E1E",
-            color: "#EDEDED",
-            padding: "16px",
-            boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-          },
-          duration: 1500,
-        });
+        toastComponent.error(response.details || "An error occured", 1500);
       }
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
-        toast(error.message, {
-          icon: <ErrorIcon />,
-          style: {
-            borderRadius: "12px",
-            background: "#1E1E1E",
-            color: "#EDEDED",
-            padding: "16px",
-            boxShadow: "0px 4px 12px 0px rgba(0,0,0,0.3)",
-          },
-          duration: 1500,
-        });
+        toastComponent.error(error.message || "An error occured", 1500);
       }
     } finally {
       setLoading(false);
