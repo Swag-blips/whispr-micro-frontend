@@ -1,45 +1,23 @@
-"use client";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
 import { authenticateWithGoogle } from "./services/service";
-import { Generating } from "@repo/ui/icons/Generating";
+import { redirect } from "next/navigation";
 
-const GoogleCallback = () => {
-  const code = useSearchParams().get("code");
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  const authenticateWithGoogleWrapper = async () => {
-    try {
-      const response = await authenticateWithGoogle(code!);
-      if (response.success) {
-        console.log("SUCCESS");
-        router.push("/");
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    authenticateWithGoogleWrapper();
-  }, [code]);
+const GoogleCallback = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ code: string }>;
+}) => {
+  const code = await searchParams.then((data) => data.code);
 
   if (!code) {
-    router.push("/auth");
+    redirect("/");
   }
 
-  if (loading) {
-    return (
-      <main className="flex items-center flex-col gap-2 justify-center h-screen">
-        <Generating />
-        <p>Authenticating with google</p>
-      </main>
-    );
-  }
+  const response = await authenticateWithGoogle(code);
 
+  if (response.success) {
+    redirect("/")   
+  }   
+     
   return (
     <main className="flex items-center flex-col gap-2 justify-center h-screen"></main>
   );

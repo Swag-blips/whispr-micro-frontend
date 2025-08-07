@@ -1,9 +1,9 @@
 import toast, { Renderable } from "react-hot-toast";
 
 export const toastComponent = {
-  loading: (message: string, successIcon: Renderable) => {
+  loading: (message: string, loadingIcon: Renderable) => {
     const toastId = toast(`${message}`, {
-      icon: successIcon,
+      icon: loadingIcon,
       style: {
         borderRadius: "12px",
         background: "#1E1E1E",
@@ -15,7 +15,7 @@ export const toastComponent = {
     });
 
     return toastId;
-  }, 
+  },
 
   success: (message: string, successIcon: Renderable, duration?: number) => {
     const toastId = toast(`${message}`, {

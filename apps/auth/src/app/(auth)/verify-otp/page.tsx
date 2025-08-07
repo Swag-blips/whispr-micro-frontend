@@ -1,9 +1,9 @@
-import { ArrowLeft } from "lucide-react";
 import React from "react";
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import OtpInputs from "./components/OtpInputs";
+import { ArrowLeft } from "@/app/components/icons";
 
 const OtpPage = async ({
   searchParams,
@@ -16,14 +16,14 @@ const OtpPage = async ({
     redirect("/");
   }
   return (
-    <div className="">
+    <div className="bg-[#0A0E0F] flex flex-col  h-screen">
       <nav className="py-4 px-3">
-        <Link href={"/auth"}>
+        <Link href={"/"}>
           <ArrowLeft />
         </Link>
       </nav>
-      <main className="flex items-center justify-center h-[calc(100vh-64px)]  flex-col gap-2">
-        <h2 className=" text-[32px] font-bold text-center ">
+      <main className="flex items-center justify-center flex-1  flex-col gap-2">
+        <h2 className=" text-2xl text-white font-bold text-center ">
           Enter your otp code
         </h2>
         <p className="text-[#868686] text-center">
