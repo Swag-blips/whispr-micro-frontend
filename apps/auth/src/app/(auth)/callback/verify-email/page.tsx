@@ -1,6 +1,5 @@
 import React from "react";
 import { redirect } from "next/navigation";
-import emailGif from "../../../../../public/emailGif.gif";
 import Link from "next/link";
 import { decodeJwt } from "./utils/decodeToken";
 import { verifyEmail } from "./services/service";
@@ -22,7 +21,7 @@ const CallbackVerification = async ({
   const verify = await verifyEmail(token);
 
   return (
-    <main className="text-black flex flex-col h-screen bg-[#0A0E0F] ">
+    <main className=" flex flex-col h-screen bg-[#0A0E0F] ">
       <Link href={"/"} className="p-4">
         <ArrowLeft />
       </Link>

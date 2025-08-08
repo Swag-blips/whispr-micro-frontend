@@ -1,3 +1,4 @@
+import { Welcome } from "@/app/components/shared/Welcome";
 import { authenticateWithGoogle } from "./services/service";
 import { redirect } from "next/navigation";
 
@@ -13,11 +14,14 @@ const GoogleCallback = async ({
   }
 
   const response = await authenticateWithGoogle(code);
-
+ 
   if (response.success) {
-    redirect("/")   
-  }   
-     
+    return (
+      <main className=" flex flex-col h-screen items-center justify-center bg-[#0A0E0F] ">
+        <Welcome username={response.data.username} />;
+      </main>
+    );
+  }
   return (
     <main className="flex items-center flex-col gap-2 justify-center h-screen"></main>
   );

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { resendOtp, verifyOtp } from "../services/service";
-import toast, { ErrorIcon } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { toastComponent } from "../../auth/utils/toast";
 import {
@@ -10,15 +10,17 @@ import {
   Loading,
   Success,
 } from "@/app/components/icons";
+import { Welcome } from "@/app/components/shared/Welcome";
 
 type Props = {
   email: string | string[] | undefined;
 };
-const OtpInputs = ({ email }: Props) => {
+const OtpInputs = ({ email }: Props) => { 
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [enabled, setEnabled] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const otpBoxReference = useRef<HTMLInputElement[]>([]);
+  const [loading, setLoading] = useState(false); 
+  const [data, setData] = useState({ success: false, username: "" });
+  const otpBoxReference = useRef<HTMLInputElement[]>([]); 
 
   const router = useRouter();
 
@@ -55,10 +57,9 @@ const OtpInputs = ({ email }: Props) => {
     try {
       const response = await verifyOtp(email, otp);
 
-      console.log("response", response)
-
       if (response.success) {
         toastComponent.success(response.message, <Success />);
+        setData({ success: true, username: response.data.username });
         router.push("/");
       } else if (!response.success && response.details) {
         toastComponent.error(
@@ -87,7 +88,6 @@ const OtpInputs = ({ email }: Props) => {
 
     try {
       const response = await resendOtp(email);
-      
 
       if (response.success) {
         toastComponent.success(response.message, <Success />);
@@ -118,6 +118,14 @@ const OtpInputs = ({ email }: Props) => {
       setEnabled(true);
     }
   }, [otp]);
+
+  if (data.success) {
+    return (
+      <main className=" flex flex-col h-screen items-center justify-center bg-[#0A0E0F] ">
+        <Welcome username={data.username} />;
+      </main>
+    );
+  }
 
   return (
     <div className="mt-10">
