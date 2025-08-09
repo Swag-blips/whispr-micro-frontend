@@ -16,8 +16,9 @@ const UserProfile = () => {
         alt="user-profile-img"
         width={48}
         height={48}
+        quality={100}
         className="rounded-full"
-      />
+      /> 
 
       <div className="flex flex-col gap-1">
         <span className="text-sm font-medium">{user?.username}</span>

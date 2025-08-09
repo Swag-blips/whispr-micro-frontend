@@ -15,12 +15,12 @@ import { Welcome } from "@/app/components/shared/Welcome";
 type Props = {
   email: string | string[] | undefined;
 };
-const OtpInputs = ({ email }: Props) => { 
+const OtpInputs = ({ email }: Props) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [enabled, setEnabled] = useState(false);
-  const [loading, setLoading] = useState(false); 
-  const [data, setData] = useState({ success: false, username: "" });
-  const otpBoxReference = useRef<HTMLInputElement[]>([]); 
+  const [loading, setLoading] = useState(false);
+
+  const otpBoxReference = useRef<HTMLInputElement[]>([]);
 
   const router = useRouter();
 
@@ -59,16 +59,16 @@ const OtpInputs = ({ email }: Props) => {
 
       if (response.success) {
         toastComponent.success(response.message, <Success />);
-        setData({ success: true, username: response.data.username });
+ 
         router.push("/");
       } else if (!response.success && response.details) {
         toastComponent.error(
           response.details || "An error occured",
           <ErrorIconComponent />
-        );
+        ); 
       } else {
         toastComponent.error(response.message, <ErrorIconComponent />);
-      }
+      } 
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
@@ -119,14 +119,6 @@ const OtpInputs = ({ email }: Props) => {
     }
   }, [otp]);
 
-  if (data.success) {
-    return (
-      <main className=" flex flex-col h-screen items-center justify-center bg-[#0A0E0F] ">
-        <Welcome username={data.username} />;
-      </main>
-    );
-  }
-
   return (
     <div className="mt-10">
       <div className="flex items-center gap-4">
@@ -139,15 +131,15 @@ const OtpInputs = ({ email }: Props) => {
             key={index}
             type="number"
             min="0"
-            max="9"
-            step="1"
+            max="9"      
+            step="1" 
             ref={(el) => {
               if (el) {
                 otpBoxReference.current[index] = el;
               }
             }}
             className="outline-none focus:border-[#444CE7] text-white text-2xl font-medium text-center border rounded-lg border-[#2D3438] h-16 w-[71px] [&::-webkit-inner-spin-button]:appearance-none"
-          />
+          /> 
         ))}
       </div>
       <button
@@ -172,3 +164,4 @@ const OtpInputs = ({ email }: Props) => {
 };
 
 export default OtpInputs;
+   
