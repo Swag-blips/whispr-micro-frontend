@@ -1,6 +1,6 @@
 "use client";
-import { Bell, Search, Settings } from "lucide-react";
-import { Messages } from "./icons";
+
+import { Bell, Messages, People, Settings } from "./icons";
 import { useEffect, useState } from "react";
 import { Search as SearchComponent } from "./Search";
 import { Notifications } from "./Notifications";
@@ -25,28 +25,34 @@ export default function SidebarNav() {
   }, [data]);
 
   useEffect(() => {
+    if (!notificationCount) return;
     const handleUpdateNotification = () => {
       setNotificationCount(
         (prevNotificationCount) => prevNotificationCount + 1
-      ); 
+      );
     };
     handleUpdateNotification();
   }, [notificationStore]);
 
   return (
-    <nav className="flex flex-col gap-4">
+    <nav className="flex flex-col items-center gap-8">
       {open === "Search" && <SearchComponent setOpen={setOpen} />}
       {open === "Notifications" && <Notifications setOpen={setOpen} />}
-      <div className="flex curosr-pointer items-center gap-2 bg-[#444CE7] py-2 px-2 rounded-lg text-white">
+      <div className="flex cursor-pointer items-center gap-2 bg-[#181D21] rounded-full p-3 text-white">
         <Messages />
-        Messages
+      </div>
+      <div onClick={() => setOpen("Search")} className="flex cursor-pointer ">
+        <People />
+      </div>
+      <div className="flex cursor-pointer ">
+        <Settings />
       </div>
       <div
         onClick={() => setOpen("Notifications")}
-        className="flex cursor-pointer items-center py-2 px-2 gap-2"
+        className="flex cursor-pointer items-center "
       >
         <div className="relative ">
-          <Bell strokeWidth={1} />
+          <Bell />
 
           {notificationCount ? (
             <div className="size-3 absolute top-0 right-0 text-white text-[10px] bg-red-500 rounded-full flex items-center justify-center">
@@ -56,18 +62,6 @@ export default function SidebarNav() {
             ""
           )}
         </div>
-        Notifications
-      </div>
-      <div className="flex cursor-pointer py-2 px-2 items-center gap-2">
-        <Settings strokeWidth={1} />
-        Settings
-      </div>
-      <div
-        onClick={() => setOpen("Search")}
-        className="flex cursor-pointer py-2 px-2 items-center gap-2"
-      >
-        <Search strokeWidth={1} />
-        Search
       </div>
     </nav>
   );

@@ -1,27 +1,51 @@
-import {  Search } from "lucide-react";
+"use client";
+
+import { Search } from "lucide-react";
 import Chats from "./Chats";
 import { CreateGroup } from "./CreateGroup";
-
+import { useAuth } from "../context/AuthContext";
+import Image from "next/image";
+import { useSocket } from "../context/SocketContext";
 
 const UserChats = () => {
+  const { user } = useAuth();
+  const { onlineUsers } = useSocket();
   return (
-    <aside className="max-w-[469px] pl-4 pr-8  flex-col py-4 overflow-y-auto h-full flex  border-r border-[#F2F0F0]">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-medium">Messages</h2>
+    <aside className="w-[423px] bg-[#101516]   flex-col overflow-y-auto h-full flex  border-r border-[#F2F0F0]">
+      <div className="flex items-center p-4 border-b border-[#232728] justify-between">
+        <div className="flex items-center gap-2">
+          {user?.avatar && (
+            <div className="relative">
+              <img
+                src={user.avatar}
+                alt="user"
+                className=" size-14 rounded-full"
+              />
+              {onlineUsers.includes(user._id) && (
+                <div className="size-2.5 bg-[#34C759] rounded-full absolute top-1 right-1" />
+              )}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-2">
+            <p className="font-medium text-left text-white">{user?.username}</p>
+            <p className="text-[#C4C4C4] ">{user?.bio}</p>
+          </div>
+        </div>
 
         <CreateGroup />
       </div>
 
-      <div className="bg-[#F6F6F6] flex items-center gap-2 rounded-2xl py-3 pl-3 mt-6 w-full">
-        <Search color="#C4C4C4" strokeWidth={1} />
+      <div className="bg-[#1F2324] mx-4 border border-[#2A2E2F] flex items-center gap-2 rounded-lg p-4 mt-6 ">
+        <Search color="#6C757D" strokeWidth={1} />
         <input
-          className="outline-none bg-transparent"
+          className="outline-none text-white placeholder:text-[#A0A4A6] bg-transparent"
           type="text"
-          placeholder="Search"
+          placeholder="Search for a friend"
         />
       </div>
 
-      <div className="flex flex-col mt-8  gap-6">
+      <div className="flex flex-col flex-1 mt-8  gap-6">
         <Chats />
       </div>
       {/* 

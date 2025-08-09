@@ -10,6 +10,7 @@ import { useSocket } from "../context/SocketContext";
 import { useNotificationStore } from "../store/notification.store";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import { EmptyChats } from "./EmptyChats";
 
 const Chats = () => {
   const [allUserChats, setAllUserChats] = useState<ChatsType[]>([]);
@@ -52,7 +53,7 @@ const Chats = () => {
             ? "sent you a friend request"
             : "accepted your friend request"}
         </span>
-      </div> 
+      </div>
     ));
   }, [notifications]);
 
@@ -141,7 +142,7 @@ const Chats = () => {
             </div>
           ))
       ) : (
-        <>No chats yet. Add a friend to start chatting.</>
+        <EmptyChats />
       )}
     </>
   );
