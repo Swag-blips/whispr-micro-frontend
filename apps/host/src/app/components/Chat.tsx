@@ -10,6 +10,7 @@ import useSWR from "swr";
 import { getMessages } from "../services/chats";
 import { Message } from "../types/types";
 import { useAuth } from "../context/AuthContext";
+import { NotSelectedChat } from "./NotSelectedChat";
 
 export const Chat = () => {
   const { currentChat } = useChatStore();
@@ -32,8 +33,6 @@ export const Chat = () => {
       setAllMessages(data.messages);
     }
   }, [data?.messages, isLoading]);
-
-
 
   const addMessage = (msg: Message) => {
     setAllMessages((prev) => [...prev, msg]);
@@ -72,7 +71,7 @@ export const Chat = () => {
     };
   }, [socket, currentChat?._id]);
 
-  if (!currentChat) return null;
+  if (!currentChat) return <NotSelectedChat />;
 
   return (
     <div className="flex-1 relative bg-[#F6F8FC] h-full flex flex-col">

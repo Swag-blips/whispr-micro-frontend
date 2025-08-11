@@ -4,18 +4,17 @@ import { Search } from "lucide-react";
 import Chats from "./Chats";
 import { CreateGroup } from "./CreateGroup";
 import { useAuth } from "../context/AuthContext";
-import Image from "next/image";
 import { useSocket } from "../context/SocketContext";
 
 const UserChats = () => {
   const { user } = useAuth();
   const { onlineUsers } = useSocket();
   return (
-    <aside className="w-[423px] bg-[#101516]   flex-col overflow-y-auto h-full flex  border-r border-[#F2F0F0]">
+    <aside className="w-[423px] bg-[#101516]   flex-col overflow-y-auto h-full flex  border-r border-[#232728]">
       <div className="flex items-center p-4 border-b border-[#232728] justify-between">
         <div className="flex items-center gap-2">
           {user?.avatar && (
-            <div className="relative">
+            <div className="relative"> 
               <img
                 src={user.avatar}
                 alt="user"
@@ -45,7 +44,7 @@ const UserChats = () => {
         />
       </div>
 
-      <div className="flex flex-col flex-1 mt-8  gap-6">
+      <div className=" flex-col flex-1 mt-8 flex items-center justify-center  gap-6">
         <Chats />
       </div>
       {/* 

@@ -1,6 +1,13 @@
 "use client";
 
-import { Bell, Messages, People, Settings } from "./icons";
+import {
+  Bell,
+  Messages,
+  MessagesAlt,
+  People,
+  PeopleSolid,
+  Settings,
+} from "./icons";
 import { useEffect, useState } from "react";
 import { Search as SearchComponent } from "./Search";
 import { Notifications } from "./Notifications";
@@ -38,11 +45,16 @@ export default function SidebarNav() {
     <nav className="flex flex-col items-center gap-8">
       {open === "Search" && <SearchComponent setOpen={setOpen} />}
       {open === "Notifications" && <Notifications setOpen={setOpen} />}
-      <div className="flex cursor-pointer items-center gap-2 bg-[#181D21] rounded-full p-3 text-white">
-        <Messages />
+      <div
+        className={`flex cursor-pointer items-center gap-2 ${open === null && "bg-[#181D21] p-3"}  rounded-full  text-white`}
+      >
+        {open === null ? <Messages /> : <MessagesAlt />}
       </div>
-      <div onClick={() => setOpen("Search")} className="flex cursor-pointer ">
-        <People />
+      <div
+        onClick={() => setOpen("Search")}
+        className={`flex  ${open === "Search" && "bg-[#181D21]  p-3"} rounded-full cursor-pointer `}
+      >
+        {open === "Search" ? <PeopleSolid /> : <People />}
       </div>
       <div className="flex cursor-pointer ">
         <Settings />

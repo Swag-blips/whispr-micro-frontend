@@ -1,5 +1,5 @@
 export interface User {
-  avatar?: string;
+  avatar: string;
   bio: string;
   createdAt: Date;
   email: string;

@@ -4,3 +4,7 @@ export { default as Notifications } from "./Notifications";
 export { default as People } from "./People";
 export { default as Bell } from "./Bell";
 export { default as Settings } from "./Settings";
+export { default as PeopleSolid } from "./PeopleSolid";
+export { default as MessagesAlt } from "./MessagesAlt";
+export { default as Loading } from "./Loading";
+export { default as NotFound } from "./NotFound";

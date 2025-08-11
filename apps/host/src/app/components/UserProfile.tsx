@@ -19,7 +19,7 @@ const UserProfile = () => {
         className="rounded-full"
       />
     </div>
-  ); 
+  );
 };
 
 export default UserProfile;
