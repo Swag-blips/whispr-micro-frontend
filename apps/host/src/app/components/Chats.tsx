@@ -38,17 +38,17 @@ const Chats = () => {
     const latestNotification = notifications[notifications.length - 1];
     toast.custom((t) => (
       <div
-        className={`bg-white p-4 rounded shadow-md flex items-center gap-3 max-w-sm ${
+        className={`p-4 rounded-xl flex items-center gap-3  bg-[#1E1E1E] text-[#EDEDED]  shadow-[0px_4px_12px_rgba(0,0,0,0.3)] ${
           t.visible ? "animate-enter" : "animate-leave"
         }`}
       >
         <img
           src={latestNotification.sender.avatar}
           alt={latestNotification.sender.username}
-          className="w-10 h-10 rounded-full object-cover"
+          className="w-8 h-8 rounded-full object-cover"
         />
-        <span className="text-gray-800 text-sm">
-          <strong>{latestNotification.sender.username}</strong>{" "}
+        <span className="">
+          <span>{latestNotification.sender.username}</span>{" "}
           {latestNotification.type === "sendFriendRequest"
             ? "sent you a friend request"
             : "accepted your friend request"}

@@ -39,12 +39,12 @@ export const Search = ({ setOpen }: Props) => {
       }
       return response;
     } catch (error) {
-      console.error(error); 
+      console.error(error);
     } finally {
       setLoading(false);
     }
-  }; 
-  
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     console.log("here");
     if (e.key === "Enter") {
@@ -78,7 +78,12 @@ export const Search = ({ setOpen }: Props) => {
             onKeyDown={handleKeyPress}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <X color="#C4C4C4" size={24} className="cursor-pointer" />
+          <X
+            color="#C4C4C4"
+            size={24}
+            className="cursor-pointer"
+            onClick={() => setOpen(null)}
+          />
         </div>
       </form>
 

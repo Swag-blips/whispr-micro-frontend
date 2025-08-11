@@ -1,10 +1,6 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { User } from "../types/types";
-import { sendFriendRequest } from "../services/friend";
-import toast from "react-hot-toast";
-
-import { AxiosError } from "axios";
 import { ChevronRight } from "lucide-react";
 import { useSocket } from "../context/SocketContext";
 import { UserDetails } from "./UserDetails";
@@ -14,34 +10,8 @@ type Props = {
 };
 
 const Users = ({ user }: Props) => {
-  const [loading, setLoading] = useState(false);
   const [openUser, setOpenUser] = useState(false);
   const { onlineUsers } = useSocket();
-
-  console.log("online users", onlineUsers);
-  const handleSendRequest = async (userId: string) => {
-    setLoading(true);
-
-    try {
-      const request = await sendFriendRequest(userId);
-
-      if (request.success) {
-        toast.success(request.message);
-      } else {
-        console.log("ELSE BLOCK");
-        toast.error(request.message);
-      }
-    } catch (error) {
-      console.log(error);
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message || "Failed to add members");
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const userIsOnline = onlineUsers.includes(user._id);
   return (
@@ -72,7 +42,7 @@ const Users = ({ user }: Props) => {
 
       <ChevronRight color="#C4C4C4" size={24} />
 
-      {openUser && <UserDetails user={user} isOnline={userIsOnline} />}
+      {openUser && <UserDetails user={user} isOnline={userIsOnline} setOpenUser={setOpenUser} />}
     </div>
   );
 };

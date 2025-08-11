@@ -13,13 +13,14 @@ import { convertDate } from "../utils/convertDate";
 import { acceptFriendRequest, declineFriendRequest } from "../services/friend";
 import { Generating } from "@repo/ui/icons/Generating";
 import { AxiosError } from "axios";
+import { useSocket } from "../context/SocketContext";
 type Props = {
   setOpen: (state: NavState) => void;
 };
 
 export const Notifications = ({ setOpen }: Props) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-
+  const { onlineUsers } = useSocket();
   const [loading, setLoading] = useState(false);
   const fetchNotifications = async () => {
     try {
@@ -111,41 +112,40 @@ export const Notifications = ({ setOpen }: Props) => {
       handleMarkNotificationsAsRead(unreadIds);
     }
   }, [notifications]);
-  return (
-    <div className="fixed inset-0 bg-black/20 py-4 backdrop-blur-[10px] pr-8  top-0 z-50">
-      <div className="bg-white h-full w-[345px] ml-auto rounded-lg">
-        <div className="flex items-center px-4 py-4 justify-between">
-          <div className="flex items-center gap-2">
-            <Image src={Logo} alt="logo" width={32} height={32} />
-            <h2 className="font-medium">Notifications</h2>
-          </div>
 
+  return (
+    <div className="fixed inset-0 bg-white/5 py-4 backdrop-blur-sm flex flex-col gap-6 items-center justify-center  top-0 z-50">
+      <div className="bg-[#101516] h-[484px] flex flex-col w-[345px]  rounded-lg">
+        <div className=" ml-auto p-4">
           <X
-            strokeWidth={1}
             color="#8C8C8C"
-            size={16}
+            size={24}
             className="cursor-pointer"
             onClick={() => setOpen(null)}
           />
         </div>
 
-        <div className="flex flex-col mx-4 gap-6">
+        <div className="flex flex-col gap-6">
           {notifications.map((notification) => (
             <div key={notification._id} className="flex items-start gap-2.5">
-              <Image
-                width={48}
-                height={48}
-                src={
-                  notification.from.avatar ||
-                  "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
-                }
-                alt="user"
-                className="rounded-full"
-              />
+              <div>
+                <Image
+                  width={48}
+                  height={48}
+                  src={
+                    notification.from.avatar ||
+                    "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
+                  }
+                  alt="user"
+                  className="rounded-full"
+                />
+
+                {}
+              </div>
 
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
-                  <p className="text-[#0A0A0A] font-medium ">
+                  <p className="text-white ">
                     {notification.from.username} sent you a request
                   </p>
                   <p className="text-[#8C8C8C] font-normal text-xs">
