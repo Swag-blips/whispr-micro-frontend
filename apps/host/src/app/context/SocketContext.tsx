@@ -60,7 +60,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!socketRef.current) return;
     socketRef.current.on("onlineUsers", (data) => {
-      console.log("incoming users", data);
       const parsedData = JSON.parse(data);
       setOnlineUsers(parsedData || []);
     });

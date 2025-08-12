@@ -32,7 +32,6 @@ export default function SidebarNav() {
   }, [data]);
 
   useEffect(() => {
-    if (!notificationCount) return;
     const handleUpdateNotification = () => {
       setNotificationCount(
         (prevNotificationCount) => prevNotificationCount + 1

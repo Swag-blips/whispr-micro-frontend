@@ -11,7 +11,7 @@ export interface User {
 export interface Notification {
   _id: string;
   from: User;
-  to: string;
+  to: User;
   type: "Accepted" | "Declined" | "Pending";
   createdAt: Date;
   updatedAt: string;

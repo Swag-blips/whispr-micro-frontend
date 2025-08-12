@@ -36,9 +36,9 @@ const Users = ({ user }: Props) => {
 
         <div className="flex flex-col gap-1">
           <h2 className="text-white">{user.username}</h2>
-          <p className="text-sm text-[#C4C4C4]">{user.bio}</p>
+          <p className="text-sm max-w-[304px] truncate text-[#C4C4C4]">{user.bio}</p>
         </div>
-      </div>
+      </div> 
 
       <ChevronRight color="#C4C4C4" size={24} />
 

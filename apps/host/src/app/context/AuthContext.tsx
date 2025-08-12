@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         "/user/currentUser"
       )) as AxiosResponse<{ success: boolean; currentUser: User }>;
 
-      console.log(res);
+
       if (res.data.success) {
         setUser(res.data.currentUser);
       }

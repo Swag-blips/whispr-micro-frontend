@@ -85,6 +85,7 @@ export const UserDetails = ({ user, isOnline, setOpenUser }: Props) => {
             width={96}
             height={96}
             className="rounded-full"
+            quality={100}
           />
 
           {isOnline && (
@@ -96,7 +97,9 @@ export const UserDetails = ({ user, isOnline, setOpenUser }: Props) => {
               <h2 className="text-2xl font-semibold text-white">
                 {user.username}
               </h2>
-              <p className=" text-[#C4C4C4]">{user.bio}</p>
+              <p className=" max-w-[304px] truncate text-[#C4C4C4]">
+                {user.bio}
+              </p>
             </div>
 
             <button

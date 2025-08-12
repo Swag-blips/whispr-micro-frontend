@@ -17,6 +17,7 @@ import { toastComponent } from "@repo/ui";
 import { Loading } from "./icons";
 import { Error as ErrorIcon } from "@repo/ui/icons/Error";
 import { Success } from "@repo/ui/icons/Success";
+import { useAuth } from "../context/AuthContext";
 type Props = {
   setOpen: (state: NavState) => void;
 };
@@ -24,6 +25,7 @@ type Props = {
 export const Notifications = ({ setOpen }: Props) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { onlineUsers } = useSocket();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const fetchNotifications = async () => {
     try {
@@ -162,6 +164,8 @@ export const Notifications = ({ setOpen }: Props) => {
   TimeAgo.addLocale(en);
 
   const timeAgo = new TimeAgo("en-US");
+
+  console.log("notifications", notifications);
   return (
     <div className="fixed inset-0 bg-white/5 py-4 backdrop-blur-sm flex flex-col gap-6 items-center justify-center  top-0 z-50">
       <div className="bg-[#101516] h-[484px] flex flex-col min-w-[389px] px-4 gap-6 py-4 rounded-lg">
@@ -176,79 +180,101 @@ export const Notifications = ({ setOpen }: Props) => {
         </div>
 
         <div className="flex flex-col gap-6">
-          {notifications.map((notification) => (
-            <div key={notification._id} className="flex items-start gap-2.5">
-              <div className="relative">
-                <Image
-                  width={48}
-                  height={48}
-                  src={
-                    notification.from.avatar ||
-                    "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
-                  }
-                  alt="user"
-                  className="rounded-full"
-                />
+          {notifications.map((notification) => {
+            const isSender = notification.from._id === user?._id;
 
-                {onlineUsers.includes(notification.from._id) && (
-                  <div className="size-2.5 bg-[#34C759] rounded-full absolute top-1 right-0" />
-                )}
-              </div>
+            const isReceiver = notification.to._id === user?._id;
+            console.log(
+              "receiverId",
+              notification.to._id,
+              "user id",
+              user?._id
+            );
+            return (
+              <div key={notification._id} className="flex items-start gap-2.5">
+                <div className="relative">
+                  <Image
+                    width={48}
+                    height={48}
+                    src={
+                      isSender
+                        ? notification.to.avatar
+                        : notification.from.avatar
+                    }
+                    alt="user"
+                    className="rounded-full"
+                  />
 
-              <div className="flex items-center w-full justify-between">
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-1">
-                    <p className="text-white ">
-                      {notification.from.username} sent you a friend request
-                    </p>
-
-                    <div className="flex items-center text-[#C4C4C4]">
-                      <p className=" font-normal text-sm">
-                        {timeAgo.format(new Date(notification.createdAt))}
-                      </p>
-                      &nbsp; •&nbsp;
-                      <p>
-                        {notification.type == "Pending"
-                          ? "new request"
-                          : notification.type === "Accepted"
-                            ? "Accepted request"
-                            : ""}
-                      </p>
-                    </div>
-                  </div>
-                  {notification.type === "Pending" && (
-                    <div className="flex items-center gap-2 ">
-                      <button
-                        disabled={loading}
-                        onClick={() =>
-                          declineFriendRequestWrapper(
-                            notification._id,
-                            notification.from
-                          )
-                        }
-                        className=" cursor-pointer border rounded-lg border-[#2A2E2F] text-white px-4 py-2"
-                      >
-                        Decline
-                      </button>
-                      <button
-                        disabled={loading}
-                        onClick={() =>
-                          acceptFriendRequestWrapper(notification.from)
-                        }
-                        className=" cursor-pointer flex items-center justify-center bg-[#444CE7] text-white px-4 py-2 rounded-lg"
-                      >
-                        Accept
-                      </button>
-                    </div>
+                  {onlineUsers.includes(
+                    isSender ? notification.to._id : notification.from._id
+                  ) && (
+                    <div className="size-2.5 bg-[#34C759] rounded-full absolute top-1 right-0" />
                   )}
                 </div>
 
-                {!notification.read && (
-                  <div className="bg-[#444CE7] size-2 rounded-full" />
-                )}
+                <div className="flex items-center w-full justify-between">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-white ">
+                        {isSender
+                          ? notification.to.username
+                          : notification.from.username}{" "}
+                        {notification.type === "Accepted" && isSender
+                          ? "accepted your friend request"
+                          : (notification.type === "Pending" && isReceiver) ||
+                              (notification.type === "Accepted" && isReceiver)
+                            ? "sent you a friend request"
+                            : "declined your friend request"}
+                      </p>
+
+                      <div className="flex items-center text-[#C4C4C4]">
+                        <p className=" font-normal">
+                          {timeAgo.format(new Date(notification.createdAt))}
+                        </p>
+                        &nbsp; •&nbsp;
+                        <p>
+                          {notification.type == "Pending"
+                            ? "new request"
+                            : notification.type === "Accepted"
+                              ? "Accepted request"
+                              : ""}
+                        </p>
+                      </div>
+                    </div>
+                    {notification.type === "Pending" && (
+                      <div className="flex items-center gap-2 ">
+                        <button
+                          disabled={loading}
+                          onClick={() =>
+                            declineFriendRequestWrapper(
+                              notification._id,
+                              notification.from
+                            )
+                          }
+                          className=" cursor-pointer border rounded-lg border-[#2A2E2F] text-white px-4 py-2"
+                        >
+                          Decline
+                        </button>
+                        <button
+                          disabled={loading}
+                          onClick={() =>
+                            acceptFriendRequestWrapper(notification.from)
+                          }
+                          className=" cursor-pointer flex items-center justify-center bg-[#444CE7] text-white px-4 py-2 rounded-lg"
+                        >
+                          Accept
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {!notification.read && (
+                    <div className="bg-[#444CE7] size-2 rounded-full" />
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
