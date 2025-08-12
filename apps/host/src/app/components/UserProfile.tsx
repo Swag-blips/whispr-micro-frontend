@@ -13,8 +13,8 @@ const UserProfile = () => {
           "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
         }
         alt="user-profile-img"
-        width={32}
-        height={32}
+        width={56}
+        height={56}
         quality={100}
         className="rounded-full"
       />

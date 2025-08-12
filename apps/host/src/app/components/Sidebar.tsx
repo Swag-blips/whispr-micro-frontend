@@ -6,7 +6,7 @@ import UserProfile from "./UserProfile";
 
 export const Sidebar = () => {
   return (
-    <aside className="w-[74px] flex items-center flex-col justify-between  bg-[#101516] py-8 h-full border-r border-[#232728]">
+    <aside className="w-[125px] flex items-center flex-col justify-between  bg-[#101516] py-8 h-full border-r border-[#232728]">
       <div className="flex ">
         <Image src={Logo} alt="logo" />
       </div>

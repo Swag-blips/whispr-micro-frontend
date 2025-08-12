@@ -11,6 +11,7 @@ import { useNotificationStore } from "../store/notification.store";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import { EmptyChats } from "./EmptyChats";
+import { Loading } from "./icons";
 
 const Chats = () => {
   const [allUserChats, setAllUserChats] = useState<ChatsType[]>([]);
@@ -88,11 +89,18 @@ const Chats = () => {
       socket?.off("addToChats");
     };
   }, [socket]);
-  if (isLoading) return <div>Loading....</div>;
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center flex-1">
+        <Loading width="32" height="32" />
+      </div>
+    );
   if (error) return <div>{error}</div>;
 
   return (
-    <>
+    <div
+      className={`flex-col mt-8 flex justify-center  ${!allUserChats.length && "flex-1"} gap-6`}
+    >
       {allUserChats && allUserChats?.length > 0 ? (
         allUserChats
           ?.sort((a, b) => b.updatedAt - a.updatedAt)
@@ -144,7 +152,7 @@ const Chats = () => {
       ) : (
         <EmptyChats />
       )}
-    </>
+    </div>
   );
 };
 

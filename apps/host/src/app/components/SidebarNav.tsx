@@ -45,9 +45,9 @@ export default function SidebarNav() {
       {open === "Search" && <SearchComponent setOpen={setOpen} />}
       {open === "Notifications" && <Notifications setOpen={setOpen} />}
       <div
-        className={`flex cursor-pointer items-center gap-2 ${open === null && "bg-[#181D21] p-3"}  rounded-full  text-white`}
+        className={`flex cursor-pointer items-center gap-2 ${open === null && "bg-[#181D21] p-4"}  rounded-full  text-white`}
       >
-        {open === null ? <Messages /> : <MessagesAlt />}
+        {open === null ? <Messages width="24" height="24" /> : <MessagesAlt />}
       </div>
       <div
         onClick={() => setOpen("Search")}
@@ -56,7 +56,7 @@ export default function SidebarNav() {
         {open === "Search" ? <PeopleSolid /> : <People />}
       </div>
       <div className="flex cursor-pointer ">
-        <Settings />
+        <Settings /> 
       </div>
       <div
         onClick={() => setOpen("Notifications")}

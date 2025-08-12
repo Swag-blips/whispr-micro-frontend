@@ -2,7 +2,7 @@ import { Messages } from "./icons";
 
 export const EmptyChats = () => {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-1 h-full flex-col items-center justify-center">
       <div className="size-14 flex items-center justify-center bg-[#181D21] rounded-lg">
         <Messages width="24" height="24" />
       </div>
