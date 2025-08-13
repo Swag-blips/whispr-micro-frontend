@@ -27,8 +27,9 @@ export const ChatHeader = ({ currentChat }: Props) => {
   const [groupBio, setGroupBio] = useState(currentChat.bio);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedToAdd, setSelectedToAdd] = useState<string[]>([]);
+  const [userIsTyping, setUserIsTyping] = useState(false);
 
-  const { onlineUsers } = useSocket();
+  const { onlineUsers, socket } = useSocket();
 
   const { setCurrentChat } = useChatStore();
   const { trigger: handleRemoveUser } = useSWRMutation(
@@ -108,6 +109,23 @@ export const ChatHeader = ({ currentChat }: Props) => {
     setGroupName(currentChat.groupName);
   }, [currentChat]);
 
+  useEffect(() => {
+    socket?.on("userTyping", (data) => {
+      console.log("DATA", data);
+      if (data.chatId !== currentChat._id) return;
+      setUserIsTyping(true);
+    });
+
+    socket?.on("stopTyping", () => {
+      setUserIsTyping(false);
+    });
+
+    return () => {
+      socket?.off("userTyping");
+      socket?.off("stopTyping");
+    };
+  }, [currentChat, socket]);
+
   return (
     <>
       <header className="flex items-center bg-[#101516] border-b border-[#232728] justify-between px-4 py-6">
@@ -142,11 +160,24 @@ export const ChatHeader = ({ currentChat }: Props) => {
                   ? currentChat.otherUsers.username
                   : currentChat.groupName}
               </h1>
-              <p className="text-[#A0A4A6] text-xs font-normal">
-                {currentChat.type === "private" &&
-                !Array.isArray(currentChat.otherUsers)
-                  ? currentChat.otherUsers.bio
-                  : currentChat.bio}
+
+              {!userIsTyping && (
+                <p className="text-[#A0A4A6] text-xs font-normal">
+                  {currentChat.type === "private" &&
+                  !Array.isArray(currentChat.otherUsers)
+                    ? currentChat.otherUsers.bio
+                    : currentChat.bio}
+                </p>
+              )}
+
+              <p
+                className={`text-[#00FF7F] text-xs transition-all duration-300 ${
+                  userIsTyping
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 -translate-y-1 "
+                }`}
+              >
+                Typing
               </p>
             </div>
           </div>
@@ -154,10 +185,10 @@ export const ChatHeader = ({ currentChat }: Props) => {
 
         <div className="flex items-center gap-4">
           <div className="border cursor-pointer border-[#232728] flex items-center justify-center rounded-full size-12">
-            <Video  color="#E2E8F0" size={24} />
+            <Video color="#E2E8F0" size={24} />
           </div>
           <div className="border cursor-pointer border-[#232728] flex items-center justify-center rounded-full size-12">
-            <Phone  color="#E2E8F0" fill="#E2E8F0" size={24} />
+            <Phone color="#E2E8F0" fill="#E2E8F0" size={24} />
           </div>
 
           {currentChat.type === "group" && (

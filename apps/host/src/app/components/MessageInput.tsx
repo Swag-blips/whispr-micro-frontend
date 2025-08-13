@@ -35,24 +35,12 @@ export const MessageInput = ({
 
   const debounceStopTypingRef = useRef(
     debounce(() => {
-      console.log("STOPPED TYPING");
-      socket?.emit("stopTyping", { chatId: currentChat?._id });
+      socket?.emit("stopTyping", {
+        chatId: currentChat?._id,
+        userId: user?._id,
+      });
     }, 500)
   );
-  useEffect(() => {
-    socket?.on("userTyping", (data) => {
-      setUserIsTyping(data);
-    });
-
-    socket?.on("stopTyping", () => {
-      setUserIsTyping("");
-    });
-
-    return () => {
-      socket?.off("userTyping");
-      socket?.off("stopTyping");
-    };
-  }, [currentChat, socket]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -114,8 +102,6 @@ export const MessageInput = ({
   return (
     <>
       <div className="bg-[#101516] flex items-center gap-2 p-4 h-[72px] w-full">
-        <div>{userIsTyping}</div>
-
         <div className="size-8 bg-[#181D21] rounded-full flex items-center justify-center ">
           <Attachment />
         </div>

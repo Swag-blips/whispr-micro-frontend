@@ -5,7 +5,7 @@ import { useOnlineFriends } from "../hooks/useOnlineFriends";
 import Image from "next/image";
 
 export const ActiveUsers = () => {
-  const { onlineFriends } = useOnlineFriends();
+  const { onlineFriends, registerFriendRef } = useOnlineFriends();
 
   if (!onlineFriends.length) return null;
   return (
@@ -23,6 +23,7 @@ export const ActiveUsers = () => {
         {onlineFriends.map((friend) => (
           <div
             key={friend._id}
+            ref={(el) => registerFriendRef(friend._id, el)}
             className="flex-col flex items-center justify-center  gap-2 "
           >
             <div className="relative">

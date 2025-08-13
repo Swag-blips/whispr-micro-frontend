@@ -52,7 +52,7 @@ export const ChatDetails = () => {
     <div className="w-[298px] relative chat-scrollbar  overflow-y-auto bg-[#101516] border-l border-[#232728] h-full">
       <div
         id="chat-header"
-        ref={headerRef}
+        ref={headerRef} 
         className=" sticky top-0 bg-inherit z-50  flex items-center justify-between p-7 border-b border-[#232728]"
       >
         <h2 className="text-white text-2xl font-medium">Chat details</h2>
