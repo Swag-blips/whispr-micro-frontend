@@ -128,7 +128,7 @@ export const ChatHeader = ({ currentChat }: Props) => {
 
   return (
     <>
-      <header className="flex items-center bg-[#101516] border-b border-[#232728] justify-between px-4 py-6">
+      <header className="flex items-center bg-[#101516] border-b border-[#232728] justify-between h-fit px-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 ">
             {currentChat.type === "private" &&
@@ -171,10 +171,10 @@ export const ChatHeader = ({ currentChat }: Props) => {
               )}
 
               <p
-                className={`text-[#00FF7F] text-xs transition-all duration-300 ${
+                className={`text-[#00FF7F] text-xs  transition-all duration-300 ${
                   userIsTyping
                     ? "opacity-100 translate-y-0"
-                    : "opacity-0 -translate-y-1 "
+                    : "opacity-0 -translate-y-1  "
                 }`}
               >
                 Typing

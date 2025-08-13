@@ -13,7 +13,7 @@ export const ActiveUsers = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl text-white font-medium">Active now</h2>
 
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center cursor-pointer">
           <p className="text-[#CFCFCF]">see more</p>
           <ChevronRight color="#CFCFCF" size={16} />
         </div>
