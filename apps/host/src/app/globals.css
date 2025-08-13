@@ -54,3 +54,24 @@ body {
     Inter Display,
     sans-serif;
 }
+
+@layer base {
+  .chat-scrollbar::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  .chat-scrollbar::-webkit-scrollbar-track {
+    background:  #101516;
+  }
+
+  /* Handle */
+  .chat-scrollbar::-webkit-scrollbar-thumb {
+    background: #2A3235;
+  }
+
+  /* Handle on hover */
+  .chat-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #5a5f66;
+  }
+}
