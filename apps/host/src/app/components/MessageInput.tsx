@@ -1,5 +1,5 @@
 "use client";
-import { Image, Mic, Send } from "lucide-react";
+import { Mic } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { sendGroupMessage, sendMessage } from "../services/chats";
@@ -9,6 +9,7 @@ import { mutate } from "swr";
 import { v4 as uuid } from "uuid";
 import { useAuth } from "../context/AuthContext";
 import { Message } from "../types/types";
+import { Attachment, Send } from "./icons";
 
 function debounce(cb: (...args: unknown[]) => void, delay = 1000) {
   let timeout: NodeJS.Timeout;
@@ -112,30 +113,32 @@ export const MessageInput = ({
 
   return (
     <>
-      <div className="bg-white absolute bottom-0 py-2 px-3 h-[72px] w-full">
+      <div className="bg-[#101516] flex items-center gap-2 p-4 h-[72px] w-full">
         <div>{userIsTyping}</div>
-        <div className="bg-[#F6F8FC] p-4 rounded-xl flex items-center w-full">
-          <div className="flex flex-1 items-center gap-2">
-            <Mic color="#868686" strokeWidth={1} />
 
+        <div className="size-8 bg-[#181D21] rounded-full flex items-center justify-center ">
+          <Attachment />
+        </div>
+
+        <div className="bg-[#1A1F20] p-3  rounded-xl flex items-center w-full">
+          <div className="flex flex-1 items-center gap-2">
             <input
               type="text"
               value={content}
               onChange={handleInputChange}
-              placeholder="Type your message"
-              className="placeholder:text-xs w-full placeholder:text-[#868686] text-black outline-none"
+              placeholder="Type a message"
+              className="placeholder:text-xs w-full placeholder:text-[#999999] text-white outline-none"
             />
           </div>
+        </div>
 
-          <div className="flex items-center gap-4">
-            <Send
-              onClick={handleSendMessage}
-              strokeWidth={1}
-              color="#868686"
-              className="cursor-pointer"
-            />
-            <Image strokeWidth={1} color="#868686" className="cursor-pointer" />
-          </div>
+        <Mic color="#868686" />
+
+        <div
+          onClick={handleSendMessage}
+          className="size-8 bg-[#181D21] cursor-pointer rounded-full flex items-center justify-center "
+        >
+          <Send />
         </div>
       </div>
     </>

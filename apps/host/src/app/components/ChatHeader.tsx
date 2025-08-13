@@ -153,10 +153,10 @@ export const ChatHeader = ({ currentChat }: Props) => {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="border border-[#232728] flex items-center justify-center rounded-full size-12">
+          <div className="border cursor-pointer border-[#232728] flex items-center justify-center rounded-full size-12">
             <Video  color="#E2E8F0" size={24} />
           </div>
-          <div className="border border-[#232728] flex items-center justify-center rounded-full size-12">
+          <div className="border cursor-pointer border-[#232728] flex items-center justify-center rounded-full size-12">
             <Phone  color="#E2E8F0" fill="#E2E8F0" size={24} />
           </div>
 
@@ -169,7 +169,7 @@ export const ChatHeader = ({ currentChat }: Props) => {
             </button>
           )}
 
-          <div className="border border-[#232728] flex items-center justify-center rounded-full size-12">
+          <div className="border cursor-pointer border-[#232728] flex items-center justify-center rounded-full size-12">
             <button onClick={handleEllipsisClick}>
               <EllipsisVertical color="#E2E8F0" size={24} />
             </button>

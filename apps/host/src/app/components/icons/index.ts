@@ -8,3 +8,5 @@ export { default as PeopleSolid } from "./PeopleSolid";
 export { default as MessagesAlt } from "./MessagesAlt";
 export { default as Loading } from "./Loading";
 export { default as NotFound } from "./NotFound";
+export { default as Attachment } from "./Attachment";
+export { default as Send } from "./Send";

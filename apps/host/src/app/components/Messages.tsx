@@ -261,8 +261,8 @@ export const Messages = ({
   if (error) return <p>{error.message || "Something went wrong"}</p>;
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto px-4 py-8">
-      <div className="flex-col pb-[90px] flex-1  flex gap-6">
+    <div className="flex flex-col h-full overflow-y-auto px-4 ">
+      <div className="flex-col  flex-1  flex gap-6">
         {allMessages.length > 0 ? (
           allMessages.map((msg, index) => (
             <div key={msg._id}>
