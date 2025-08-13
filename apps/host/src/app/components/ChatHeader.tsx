@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Ellipsis, Phone, Video, Plus } from "lucide-react";
+import { Ellipsis, Phone, Video, Plus, EllipsisVertical } from "lucide-react";
 import { Chats, User } from "../types/types";
 import { getAvatar } from "../utils/getUserAvatar";
 import { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import { useChatStore } from "../store/chats.store";
 import useSWR from "swr";
 import { getFriends } from "../services/user";
 import { AxiosError } from "axios";
+import { useSocket } from "../context/SocketContext";
 
 type Props = {
   currentChat: Chats;
@@ -26,6 +27,8 @@ export const ChatHeader = ({ currentChat }: Props) => {
   const [groupBio, setGroupBio] = useState(currentChat.bio);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedToAdd, setSelectedToAdd] = useState<string[]>([]);
+
+  const { onlineUsers } = useSocket();
 
   const { setCurrentChat } = useChatStore();
   const { trigger: handleRemoveUser } = useSWRMutation(
@@ -107,18 +110,25 @@ export const ChatHeader = ({ currentChat }: Props) => {
 
   return (
     <>
-      <header className="flex items-center bg-white justify-between p-4">
+      <header className="flex items-center bg-[#101516] border-b border-[#232728] justify-between px-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4 ">
             {currentChat.type === "private" &&
             !Array.isArray(currentChat.otherUsers) ? (
-              <Image
-                width={48}
-                height={48}
-                src={getAvatar(currentChat.otherUsers.avatar)}
-                alt="user"
-                className="rounded-full"
-              />
+              <div className="relative">
+                <Image
+                  width={56}
+                  height={56}
+                  src={getAvatar(currentChat.otherUsers.avatar)}
+                  alt="user"
+                  className="rounded-full"
+                  quality={100}
+                />
+
+                {onlineUsers.includes(currentChat.otherUsers._id) && (
+                  <div className="size-2.5 bg-[#34C759] rounded-full absolute top-2 right-0" />
+                )}
+              </div>
             ) : (
               <div className="bg-[#F5F5F5] flex items-center justify-center size-12 rounded-full">
                 {currentChat.groupName[0]}
@@ -126,13 +136,13 @@ export const ChatHeader = ({ currentChat }: Props) => {
             )}
 
             <div className="flex flex-col gap-1">
-              <h1 className="font-medium">
+              <h1 className="font-semibold text-[#F1F5F9] ">
                 {currentChat.type === "private" &&
                 !Array.isArray(currentChat.otherUsers)
                   ? currentChat.otherUsers.username
                   : currentChat.groupName}
               </h1>
-              <p className="text-[#8C8C8C] text-sm font-normal">
+              <p className="text-[#A0A4A6] text-xs font-normal">
                 {currentChat.type === "private" &&
                 !Array.isArray(currentChat.otherUsers)
                   ? currentChat.otherUsers.bio
@@ -143,19 +153,27 @@ export const ChatHeader = ({ currentChat }: Props) => {
         </div>
 
         <div className="flex items-center gap-4">
-          <Phone strokeWidth={1} color="#848484" />
-          <Video strokeWidth={1} color="#848484" />
+          <div className="border border-[#232728] flex items-center justify-center rounded-full size-12">
+            <Video  color="#E2E8F0" size={24} />
+          </div>
+          <div className="border border-[#232728] flex items-center justify-center rounded-full size-12">
+            <Phone  color="#E2E8F0" fill="#E2E8F0" size={24} />
+          </div>
+
           {currentChat.type === "group" && (
             <button
               onClick={() => setShowAddModal(true)}
               className="bg-[#F5F5F5] rounded-full p-2 flex items-center justify-center"
             >
-              <Plus color="#444CE7" size={20} />
+              <Plus color="#E2E8F0" size={20} />
             </button>
           )}
-          <button onClick={handleEllipsisClick}>
-            <Ellipsis strokeWidth={1} color="#848484" />
-          </button>
+
+          <div className="border border-[#232728] flex items-center justify-center rounded-full size-12">
+            <button onClick={handleEllipsisClick}>
+              <EllipsisVertical color="#E2E8F0" size={24} />
+            </button>
+          </div>
         </div>
       </header>
       {showDetails && currentChat.type === "group" && (

@@ -26,7 +26,7 @@ const Chats = () => {
   );
   const notifications = useNotificationStore((state) => state.notifications);
   const { setCurrentChat, currentChat } = useChatStore();
-  const { socket } = useSocket();
+  const { socket, onlineUsers } = useSocket();
 
   useEffect(() => {
     if (user?._id) {
@@ -99,56 +99,69 @@ const Chats = () => {
 
   return (
     <div
-      className={`flex-col mt-8 flex justify-center  ${!allUserChats.length && "flex-1"} gap-6`}
+      className={`flex-col mt-8 flex justify-center px-4  ${!allUserChats.length && "flex-1 px-0"} gap-6`}
     >
+      <h2 className="text-white text-2xl font-medium">Messages</h2>
       {allUserChats && allUserChats?.length > 0 ? (
         allUserChats
           ?.sort((a, b) => b.updatedAt - a.updatedAt)
-          .map((chat: ChatsType) => (
-            <div
-              onClick={() => setCurrentChat(chat)}
-              key={chat._id}
-              className="flex cursor-pointer items-center justify-between"
-            >
-              <div className="flex items-center  w-full justify-between">
-                <div className="flex items-center gap-2">
-                  {chat.type === "private" &&
-                  !Array.isArray(chat.otherUsers) ? (
-                    <Image
-                      width={48}
-                      height={48}
-                      src={getAvatar(chat.otherUsers.avatar)}
-                      alt="user"
-                      className="rounded-full"
-                    />
-                  ) : (
-                    <div className="bg-[#F5F5F5] flex items-center justify-center size-12 rounded-full">
-                      {chat.groupName[0]}
+          .map((chat: ChatsType) => {
+            const userIsOnline = !Array.isArray(chat.otherUsers)
+              ? onlineUsers.includes(chat.otherUsers._id)
+              : null;
+            return (
+              <div
+                onClick={() => setCurrentChat(chat)}
+                key={chat._id}
+                className="flex cursor-pointer items-center justify-between"
+              >
+                <div className="flex items-center  w-full justify-between">
+                  <div className="flex items-center gap-2">
+                    {chat.type === "private" &&
+                    !Array.isArray(chat.otherUsers) ? (
+                      <div className="relative">
+                        <Image
+                          width={48}
+                          height={48}
+                          src={getAvatar(chat.otherUsers.avatar)}
+                          alt="user"
+                          className="rounded-full"
+                          quality={100}
+                        />
+
+                        {userIsOnline && (
+                          <div className="size-2.5 bg-[#34C759] rounded-full absolute top-1 -right-0" />
+                        )}
+                      </div>
+                    ) : (
+                      <div className="bg-[#F5F5F5] flex items-center justify-center size-12 rounded-full">
+                        {chat.groupName[0]}
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-1">
+                      <h1 className="font-medium text-white">
+                        {chat.type === "private" &&
+                        !Array.isArray(chat.otherUsers)
+                          ? chat.otherUsers.username
+                          : chat.groupName}
+                      </h1>
+                      <p className="text-[#A0A4A6] text-sm font-normal">
+                        {chat.lastMessage ||
+                          "This is the beginning of our Conversation"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {chat.unreadMessages > 0 && (
+                    <div className="bg-red-500 text-sm flex items-center justify-center  size-6 rounded-full text-white">
+                      {chat.unreadMessages}
                     </div>
                   )}
-
-                  <div className="flex flex-col gap-1">
-                    <h1 className="font-medium">
-                      {chat.type === "private" &&
-                      !Array.isArray(chat.otherUsers)
-                        ? chat.otherUsers.username
-                        : chat.groupName}
-                    </h1>
-                    <p className="text-[#8C8C8C] text-sm font-normal">
-                      {chat.lastMessage ||
-                        "This is the beginning of our Conversation"}
-                    </p>
-                  </div>
                 </div>
-
-                {chat.unreadMessages > 0 && (
-                  <div className="bg-red-500 text-sm flex items-center justify-center  size-6 rounded-full text-white">
-                    {chat.unreadMessages}
-                  </div>
-                )}
               </div>
-            </div>
-          ))
+            );
+          })
       ) : (
         <EmptyChats />
       )}

@@ -10,6 +10,7 @@ import { Message } from "../types/types";
 import { Check, CheckCheck } from "lucide-react";
 import { getUserName } from "../utils/getUsername";
 import { mutate } from "swr";
+import { EmptyMessages } from "./EmptyMessages";
 
 interface MessagesProps {
   allMessages: Message[];
@@ -261,7 +262,7 @@ export const Messages = ({
 
   return (
     <div className="flex flex-col h-full overflow-y-auto px-4 py-8">
-      <div className="flex-col pb-[90px] flex gap-6">
+      <div className="flex-col pb-[90px] flex-1  flex gap-6">
         {allMessages.length > 0 ? (
           allMessages.map((msg, index) => (
             <div key={msg._id}>
@@ -364,7 +365,7 @@ export const Messages = ({
             </div>
           ))
         ) : (
-          <div>Start your Conversation</div>
+          <EmptyMessages />
         )}
         <div ref={lastMessageRef} />
       </div>

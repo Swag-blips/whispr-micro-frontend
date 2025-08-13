@@ -11,6 +11,7 @@ import { getMessages } from "../services/chats";
 import { Message } from "../types/types";
 import { useAuth } from "../context/AuthContext";
 import { NotSelectedChat } from "./NotSelectedChat";
+import { ChatDetails } from "./ChatDetails";
 
 export const Chat = () => {
   const { currentChat } = useChatStore();
@@ -74,17 +75,20 @@ export const Chat = () => {
   if (!currentChat) return <NotSelectedChat />;
 
   return (
-    <div className="flex-1 relative bg-[#F6F8FC] h-full flex flex-col">
-      <ChatHeader currentChat={currentChat} />
-      <div className="flex-1 overflow-hidden">
-        <Messages
-          allMessages={allMessages}
-          setAllMessages={setAllMessages}
-          isLoading={isLoading}
-          error={error}
-        />
+    <div className=" flex items-start h-full flex-1 ">
+      <div className="bg-[#0A0E0F] relative  flex-1  h-full flex flex-col ">
+        <ChatHeader currentChat={currentChat} />
+        <div className="flex-1 overflow-hidden">
+          <Messages
+            allMessages={allMessages}
+            setAllMessages={setAllMessages}
+            isLoading={isLoading}
+            error={error}
+          />
+        </div>
+        <MessageInput addMessage={addMessage} />
       </div>
-      <MessageInput addMessage={addMessage} />
+      <ChatDetails />
     </div>
   );
 };

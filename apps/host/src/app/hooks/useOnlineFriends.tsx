@@ -43,24 +43,18 @@ export const useOnlineFriends = () => {
   }, []);
 
   useEffect(() => {
-    console.log("rendered");
+    console.log("friends when renddered or rerendered", friends);
     if (friendsAvailable) {
       console.log("friends gotten", friends);
-      const onlineFriends = friends.filter((friend: User) =>
-        onlineUsers.includes(friend._id)
-      );
+      const onlineFriends = friends.friends
+        ? friends.friends.filter((friend: User) =>
+            onlineUsers.includes(friend._id)
+          )
+        : friends.filter((friend: User) => onlineUsers.includes(friend._id));
 
       setOnlineFriends(onlineFriends);
     }
   }, [onlineUsers, friendsAvailable]);
-
-  console.log(
-    "friends",
-    friends,
-    "online Friends",
-    onlineFriends,
-    friendsAvailable
-  );
 
   return { onlineFriends };
 };
