@@ -2,28 +2,47 @@
 
 import { useState } from "react";
 import { validateSignup } from "../utils/validate";
-
 import toast from "react-hot-toast";
-
 import { login, register } from "../services/service";
 import { useRouter } from "next/navigation";
-import { Generating } from "@repo/ui/icons/Generating";
+import {
+  Error as ErrorIcon,
+  EyeClosed,
+  EyeOpen,
+  Loading,
+  Success,
+} from "@/app/components/icons";
+import { BioData } from "./BioData";
+import { toastComponent } from "../utils/toast";
 
 type ActiveTab = "signup" | "login";
+export type AuthData = {
+  username: string;
+  bio: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 export const AuthForm = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("signup");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const [authData, setAuthData] = useState({
+  const [authData, setAuthData] = useState<AuthData>({
     username: "",
     bio: "",
     email: "",
     password: "",
+    confirmPassword: "",
+  });
+
+  const [isOpen, setIsOpen] = useState({
+    password: false,
+    confirmPassword: false,
   });
 
   const handleSignup = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const validate = validateSignup(authData); 
+    const validate = validateSignup(authData);
 
     const payload = {
       username: authData.username.trim(),
@@ -31,65 +50,128 @@ export const AuthForm = () => {
       password: authData.password.trim().replace(/\s/g, ""),
       ...(authData.bio.trim() && {
         bio: authData.bio.trim(),
-      }), 
+      }),
     };
 
-    if (validate) {
+    if (validate.isValid) {
+      const toastId = toastComponent.loading(
+        "Creating account...",
+        <Loading />
+      );
       setLoading(true);
       try {
         const response = await register(payload);
 
         if (response.success) {
-          toast.success(response.message);
-          router.push("/verify-email");
+          toastComponent.success(response.message, <Success />, 1000);
+
+          router.push(`/verify-email?email=${payload.email}`);
         } else if (!response.success && response.details) {
-          toast.error(response.details || "An error occured");
+          toastComponent.error(
+            response.details || "An error occured",
+            <ErrorIcon />,
+            1500
+          );
         } else {
-          toast.error(response.message);
+          toastComponent.error(
+            response.details || "An error occured",
+            <ErrorIcon />,
+            1500
+          );
         }
       } catch (error) {
         console.error(error);
         if (error instanceof Error) {
-          toast.error(error.message);
+          toastComponent.error(
+            error.message || "An error occured",
+            <ErrorIcon />,
+            1500
+          );
         }
       } finally {
         setLoading(false);
+        toast.dismiss(toastId);
       }
     } else {
+      toastComponent.error(validate.error, <ErrorIcon />, 1500);
       return;
     }
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setLoading(true);
+
     const payload = {
       email: authData.email.trim().replace(/\s/g, ""),
       password: authData.password.trim().replace(/\s/g, ""),
     };
+
+    const toastId = toastComponent.loading("Logging in...", <Loading />);
+
     try {
+      setLoading(true);
+
       const response = await login(payload);
+      console.log("response", response);
+
       if (response.success) {
-        toast.success(response.message);
+        toastComponent.success(response.message, <Success />);
         router.push("/verify-otp?email=" + authData.email);
       } else if (!response.success && response.details) {
-        toast.error(response.details || "An error occured");
+        toastComponent.error(
+          response.details || "An error occured",
+          <ErrorIcon />,
+          1500
+        );
       } else {
-        toast.error(response.message);
+        toastComponent.error(
+          response.message || "An error occured",
+          <ErrorIcon />,
+          1500
+        );
       }
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
-        toast.error(error.message);
+        toastComponent.error(
+          error.message || "An error occured",
+          <ErrorIcon />,
+          1500
+        );
       }
     } finally {
       setLoading(false);
+      toast.dismiss(toastId);
     }
   };
 
+  const handleOpenChange = (type: "password" | "confirmPassword ") => {
+    const openState = { ...isOpen };
+
+    if (type === "password") {
+      openState.password = !openState.password;
+    } else {
+      openState.confirmPassword = !openState.confirmPassword;
+    }
+
+    setIsOpen(openState);
+  };
+
+  const isSignUpActive =
+    !authData.email.trim() ||
+    !authData.username.trim() ||
+    !authData.password.trim() ||
+    !authData.confirmPassword.trim() ||
+    loading;
+
+  const isLoginActive =
+    !authData.email.trim() || !authData.password.trim() || loading;
+
+  console.log("authData", authData);
+
   return (
     <>
-      <div className="bg-[#F0EFF2] w-[390px] px-1 mt-10 rounded-lg h-14 flex items-center justify-between">
+      <div className="flex items-center sticky top-0 left-0 py-4 bg-[#101516]  ">
         <button
           onClick={() => {
             if (!loading) {
@@ -97,10 +179,12 @@ export const AuthForm = () => {
             }
           }}
           className={` ${
-            activeTab === "signup" ? "bg-white" : "text-[#868686]"
-          }  cursor-pointer w-[169px]  py-3  my-[0.5px] font-medium rounded-lg`}
+            activeTab === "signup"
+              ? "bg-[#1E252A] text-white"
+              : "text-[#7A8288] "
+          }  cursor-pointer  py-2 px-4   rounded-[20px]`}
         >
-          signup
+          sign up
         </button>
         <button
           onClick={() => {
@@ -108,116 +192,126 @@ export const AuthForm = () => {
               setActiveTab("login");
             }
           }}
-          className={` w-[169px] ${
-            activeTab === "login" ? "bg-white" : "text-[#868686]"
-          } cursor-pointer py-3  my-[0.5px] font-medium rounded-lg `}
+          className={`  ${
+            activeTab === "login"
+              ? "bg-[#1E252A] text-white"
+              : "text-[#7A8288] "
+          } cursor-pointer  py-2 px-4    rounded-[20px]`}
         >
           login
         </button>
       </div>
-      <form className="flex flex-col mt-8 w-[390px]  gap-6">
+      <form className="flex flex-col mt-8  gap-6">
+        <h2 className="text-2xl font-medium text-white">
+          {activeTab === "signup" ? "Create account" : "Login"}
+        </h2>
         {activeTab === "signup" && (
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col gap-2 ">
-              <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                onChange={(e) =>
-                  setAuthData({ ...authData, username: e.target.value })
-                }
-                className="border-[#D9D9D9] outline-[#444CE7] placeholder:text-[#C4C4C4] placeholder-text-sm border-[0.5px] rounded-lg py-3 pl-3"
-                placeholder="Enter your username"
-              />
-            </div>
-            <div className="flex flex-col gap-2 ">
-              <label htmlFor="bio">Bio(optional)</label>
-              <input
-                type="bio"
-                id="bio"
-                name="bio"
-                className="border-[#D9D9D9] outline-[#444CE7] placeholder-font-normal placeholder:text-[#C4C4C4] placeholder-text-sm border-[0.5px] rounded-lg py-3 pl-3"
-                placeholder="Enter your bio"
-                onChange={(e) =>
-                  setAuthData({ ...authData, bio: e.target.value })
-                }
-              />
-            </div>
-          </div>
+          <BioData setAuthData={setAuthData} authData={authData} />
         )}
 
         <div className="flex flex-col gap-2 ">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email" className="text-[#A0A4A6] ">
+            Email
+          </label>
           <input
             type="email"
             id="email"
+            value={authData.email}
             name="email"
             onChange={(e) =>
               setAuthData({ ...authData, email: e.target.value })
             }
-            className="border-[#D9D9D9] outline-[#444CE7] placeholder:text-[#C4C4C4] placeholder-text-sm border-[0.5px] rounded-lg py-3 pl-3"
+            className="border-[#2D3438] outline-none bg-[#1A1F22]   placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
             placeholder="Enter your email"
           />
         </div>
-        <div className="flex flex-col gap-2 ">
-          <label htmlFor="email">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            onChange={(e) =>
-              setAuthData({ ...authData, password: e.target.value })
-            }
-            className="border-[#D9D9D9] outline-[#444CE7] placeholder:text-[#C4C4C4] placeholder-text-sm border-[0.5px] rounded-lg py-3 pl-3"
-            placeholder="Enter your password"
-          />
+
+        <div
+          className={`${activeTab === "signup" && "flex items-center gap-4"}`}
+        >
+          <div className="flex flex-col gap-2 w-full ">
+            <label htmlFor="password" className="text-[#A0A4A6] ">
+              Password
+            </label>
+
+            <div className="relative ">
+              <input
+                type={isOpen["password"] ? "text" : "password"}
+                id="password"
+                name="password"
+                value={authData.password}
+                onChange={(e) =>
+                  setAuthData({ ...authData, password: e.target.value })
+                }
+                className="border-[#2D3438] outline-none bg-[#1A1F22] w-full  placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
+                placeholder="Enter your password"
+              />
+
+              {authData.password.trim() && (
+                <div
+                  onClick={() => handleOpenChange("password")}
+                  className="absolute right-2 cursor-pointer top-4"
+                >
+                  {isOpen["password"] ? <EyeOpen /> : <EyeClosed />}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {activeTab === "signup" && (
+            <div className="flex flex-col gap-2 w-full ">
+              <label htmlFor="confirmPassword" className="text-[#A0A4A6] ">
+                Confirm password
+              </label>
+
+              <div className="relative">
+                <input
+                  type={isOpen["confirmPassword"] ? "text" : "password"}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={authData.confirmPassword}
+                  onChange={(e) =>
+                    setAuthData({
+                      ...authData,
+                      confirmPassword: e.target.value,
+                    })
+                  }
+                  className="border-[#2D3438] outline-none bg-[#1A1F22] w-full   placeholder:text-[#7A8288] text-[#F1F1F1] placeholder-text-sm border rounded-lg h-14 pl-3"
+                  placeholder="Confirm your password"
+                />
+
+                {authData.confirmPassword.trim() && (
+                  <div
+                    onClick={() => handleOpenChange("confirmPassword ")}
+                    className="absolute right-2 cursor-pointer top-4"
+                  >
+                    {isOpen["confirmPassword"] ? <EyeOpen /> : <EyeClosed />}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {activeTab === "signup" ? (
           <button
             onClick={handleSignup}
-            disabled={
-              !authData.email.trim() ||
-              !authData.username.trim() ||
-              !authData.password.trim() ||
-              loading
-            }
+            disabled={isSignUpActive}
             className={` ${
-              !authData.email.trim() ||
-              !authData.password.trim() ||
-              !authData.username.trim()
-                ? "bg-[#C4C4C4]"
-                : "bg-[#444CE7]"
-            } cursor-pointer text-center disabled:cursor-not-allowed font-medium rounded-lg text-white py-4`}
+              isSignUpActive ? "bg-[#2A3035]" : "bg-[#444CE7]"
+            } cursor-pointer text-center disabled:cursor-not-allowed font-medium rounded-lg text-white py-6`}
           >
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <Generating />
-              </div>
-            ) : (
-              "signup"
-            )}
+            Create account
           </button>
         ) : (
           <button
             onClick={handleLogin}
-            disabled={
-              !authData.email.trim() || !authData.password.trim() || loading
-            }
+            disabled={isLoginActive}
             className={` ${
-              !authData.email.trim() || !authData.password.trim()
-                ? "bg-[#C4C4C4]"
-                : "bg-[#444CE7]"
-            } cursor-pointer disabled:cursor-not-allowed text-center font-medium rounded-lg text-white py-4`}
+              isLoginActive ? "bg-[#2A3035]" : "bg-[#444CE7]"
+            } cursor-pointer disabled:cursor-not-allowed text-center font-medium rounded-lg text-white py-6`}
           >
-            {loading ? (
-              <div className="flex items-center justify-center">
-                <Generating />
-              </div>
-            ) : (
-              "login"
-            )}
+            Login
           </button>
         )}
       </form>

@@ -6,12 +6,11 @@ import UserProfile from "./UserProfile";
 
 export const Sidebar = () => {
   return (
-    <aside className="w-[250px] flex items-center flex-col justify-between  place-items-center py-8 h-full border-r border-[#F2F0F0]">
-      <div className="flex flex-col gap-10">
-        <div className="flex items-center gap-4 ">
-          <Image src={Logo} alt="logo" />
-          <p className="text-2xl font-medium">Whispr</p>
-        </div>
+    <aside className="w-[125px] flex items-center flex-col justify-between  bg-[#101516] py-8 h-full border-r border-[#232728]">
+      <div className="flex ">
+        <Image src={Logo} alt="logo" />
+      </div>
+      <div className="flex flex-col items-center gap-10">
         <SidebarNav />
       </div>
 

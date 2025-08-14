@@ -1,5 +1,5 @@
 export interface User {
-  avatar?: string;
+  avatar: string;
   bio: string;
   createdAt: Date;
   email: string;
@@ -11,7 +11,7 @@ export interface User {
 export interface Notification {
   _id: string;
   from: User;
-  to: string;
+  to: User;
   type: "Accepted" | "Declined" | "Pending";
   createdAt: Date;
   updatedAt: string;

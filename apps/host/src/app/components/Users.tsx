@@ -1,64 +1,48 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { User } from "../types/types";
-import { sendFriendRequest } from "../services/friend";
-import toast from "react-hot-toast";
-import { Generating } from "@repo/ui/icons/Generating";
-import { AxiosError } from "axios";
+import { ChevronRight } from "lucide-react";
+import { useSocket } from "../context/SocketContext";
+import { UserDetails } from "./UserDetails";
 
 type Props = {
   user: User;
 };
 
 const Users = ({ user }: Props) => {
-  const [loading, setLoading] = useState(false);
-  const handleSendRequest = async (userId: string) => {
-    setLoading(true);
-    try {
-      const request = await sendFriendRequest(userId);
+  const [openUser, setOpenUser] = useState(false);
+  const { onlineUsers } = useSocket();
 
-      if (request.success) {
-        toast.success(request.message);
-      } else {
-        console.log("ELSE BLOCK");
-        toast.error(request.message);
-      }
-    } catch (error) {
-      console.log(error);
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message || "Failed to add members");
-      } else if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  const userIsOnline = onlineUsers.includes(user._id);
   return (
-    <div className="flex items-start mx-4 mt-4 gap-2">
-      <Image
-        src={
-          user.avatar ||
-          "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
-        }
-        width={48}
-        height={48}
-        className="rounded-full"
-        alt="user"
-      />
+    <div
+      onClick={() => setOpenUser(!openUser)}
+      className="flex items-center cursor-pointer justify-between mx-4 mt-4 gap-2"
+    >
+      <div className="flex items-center gap-2.5">
+        <div className="relative">
+          <Image
+            src={user.avatar}
+            width={48}
+            height={48}
+            className="rounded-full"
+            alt="user"
+            quality={100}
+          />
+          {userIsOnline && (
+            <div className="size-2.5 bg-[#34C759] rounded-full absolute top-1 right-0" />
+          )}
+        </div>
 
-      <div className="flex flex-col ">
-        <h2>{user.username}</h2>
-        <p className="text-xs text-[#8C8C8C]">{user.bio}</p>
+        <div className="flex flex-col gap-1">
+          <h2 className="text-white">{user.username}</h2>
+          <p className="text-sm max-w-[304px] truncate text-[#C4C4C4]">{user.bio}</p>
+        </div>
+      </div> 
 
-        <button
-          onClick={() => handleSendRequest(user._id)}
-          className="bg-[#444CE7] cursor-pointer flex items-center justify-center rounded-lg text-white h-8 mt-2 text-xs"
-        >
-          {loading ? <Generating /> : "Add friend"}
-        </button>
-      </div>
+      <ChevronRight color="#C4C4C4" size={24} />
+
+      {openUser && <UserDetails user={user} isOnline={userIsOnline} setOpenUser={setOpenUser} />}
     </div>
   );
 };

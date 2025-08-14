@@ -1,3 +1,15 @@
 export { default as Check } from "./Check";
 export { default as Messages } from "./Messages";
 export { default as Notifications } from "./Notifications";
+export { default as People } from "./People";
+export { default as Bell } from "./Bell";
+export { default as Settings } from "./Settings";
+export { default as PeopleSolid } from "./PeopleSolid";
+export { default as MessagesAlt } from "./MessagesAlt";
+export { default as Loading } from "./Loading";
+export { default as NotFound } from "./NotFound";
+export { default as Attachment } from "./Attachment";
+export { default as Send } from "./Send";
+export { default as Picture } from "./Picture";
+export { default as Doc } from "./Doc";
+export { default as Star } from "./Star";

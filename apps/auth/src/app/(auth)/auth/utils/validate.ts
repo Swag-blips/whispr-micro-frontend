@@ -1,36 +1,51 @@
 import { RegisterPayload } from "@/app/types/auth";
-import toast from "react-hot-toast";
 
 export const validateSignup = (payload: RegisterPayload) => {
-  let isValid = true;
-  const { email, password, username } = payload;
-  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const trimmed = {
+    email: payload.email.trim(),
+    password: payload.password.trim(),
+    confirmPassword: payload.confirmPassword?.trim(),
+    username: payload.username.trim(),
+  };
 
-  if (!regex.test(email.trim()) || !email.trim()) {
-    toast.error("Invalid email");
-    isValid = false;
-    return;
+  const setError = (message: string) => ({
+    isValid: false,
+    error: message,
+  });
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  if (!trimmed.email || !emailRegex.test(trimmed.email)) {
+    return setError("Invalid email");
   }
 
-  if (!password.trim()) {
-    toast.error("Invalid password");
-    isValid = false;
-    return;
-  } else if (password.trim().length < 6) {
-    toast.error("Password must be at least 6 characters long");
-    isValid = false;
-    return;
+  if (!trimmed.password) {
+    return setError("Password is required");
   }
 
-  if (!username.trim()) {
-    toast.error("Invalid username");
-    isValid = false;
-    return;
-  } else if (username.trim().length < 6) {
-    toast.error("username must be at least 6 characters long");
-    isValid = false;
-    return;
+  if (trimmed.password.length < 6) {
+    return setError("Password must be at least 6 characters long");
   }
 
-  return isValid;
+  if (!trimmed.confirmPassword) {
+    return setError("Confirm password is required");
+  }
+
+  if (trimmed.confirmPassword.length < 6) {
+    return setError("Confirm password must be at least 6 characters long");
+  }
+
+  if (trimmed.confirmPassword !== trimmed.password) {
+    return setError("Passwords do not match");
+  }
+
+  if (!trimmed.username) {
+    return setError("Username is required");
+  }
+
+  if (trimmed.username.length < 6) {
+    return setError("Username must be at least 6 characters long");
+  }
+
+  return { isValid: true, error: "" };
 };

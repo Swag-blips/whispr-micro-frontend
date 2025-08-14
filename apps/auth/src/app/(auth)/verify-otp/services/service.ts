@@ -17,11 +17,12 @@ export const verifyOtp = async (email: string, otp: string) => {
     return data;
   } catch (error) {
     console.error(error);
-  }
+    throw error;
+  } 
 };
-
+ 
 export const resendOtp = async (email: string) => {
-  try {
+  try { 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/resend-otp`,
       {

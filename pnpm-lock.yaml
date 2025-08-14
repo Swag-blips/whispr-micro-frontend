@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      react-hot-toast:
+        specifier: ^2.5.2
+        version: 2.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
       prettier:
         specifier: ^3.5.3
@@ -20,9 +24,15 @@ importers:
 
   apps/auth:
     dependencies:
+      '@gsap/react':
+        specifier: ^2.1.2
+        version: 2.1.2(gsap@3.13.0)(react@19.1.0)
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      gsap:
+        specifier: ^3.13.0
+        version: 3.13.0
       lucide-react:
         specifier: ^0.515.0
         version: 0.515.0(react@19.1.0)
@@ -78,12 +88,21 @@ importers:
 
   apps/host:
     dependencies:
+      '@gsap/react':
+        specifier: ^2.1.2
+        version: 2.1.2(gsap@3.13.0)(react@19.1.0)
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       axios:
         specifier: ^1.10.0
         version: 1.10.0
+      gsap:
+        specifier: ^3.13.0
+        version: 3.13.0
+      javascript-time-ago:
+        specifier: ^2.5.11
+        version: 2.5.11
       jose:
         specifier: ^6.0.11
         version: 6.0.11
@@ -291,6 +310,12 @@ packages:
   '@eslint/plugin-kit@0.3.1':
     resolution: {integrity: sha512-0J+zgWxHN+xXONWIyPWKFMgVuJoZuGiIFu8yxk7RJjxkzpGmyja5wRFqZIVtjDVOQpV+Rw0iOAjYPE2eQyjr0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@gsap/react@2.1.2':
+    resolution: {integrity: sha512-JqliybO1837UcgH2hVOM4VO+38APk3ECNrsuSM4MuXp+rbf+/2IG2K1YJiqfTcXQHH7XlA0m3ykniFYstfq0Iw==}
+    peerDependencies:
+      gsap: ^3.12.5
+      react: '>=17'
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1560,6 +1585,9 @@ packages:
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
+  gsap@3.13.0:
+    resolution: {integrity: sha512-QL7MJ2WMjm1PHWsoFrAQH/J8wUeqZvMtHO58qdekHpCfhvhSL4gSiz6vJf5EeMP0LOn3ZCprL2ki/gjED8ghVw==}
+
   handlebars@4.7.8:
     resolution: {integrity: sha512-vafaFqs8MZkRrSX7sFVUdo3ap/eNiLnb4IakshzvP56X5Nr1iGKAIqdX6tMlm6HcNRIkr6AxO5jFEoJzzpT8aQ==}
     engines: {node: '>=0.4.7'}
@@ -1811,6 +1839,9 @@ packages:
   iterator.prototype@1.1.5:
     resolution: {integrity: sha512-H0dkQoCa3b2VEeKQBOxFph+JAbcrQdE7KC0UkqwpLmv2EC4P41QXP+rqo9wYodACiG5/WM5s9oDApTU8utwj9g==}
     engines: {node: '>= 0.4'}
+
+  javascript-time-ago@2.5.11:
+    resolution: {integrity: sha512-Zeyf5R7oM1fSMW9zsU3YgAYwE0bimEeF54Udn2ixGd8PUwu+z1Yc5t4Y8YScJDMHD6uCx6giLt3VJR5K4CMwbg==}
 
   jiti@2.4.2:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
@@ -2287,6 +2318,9 @@ packages:
   registry-url@3.1.0:
     resolution: {integrity: sha512-ZbgR5aZEdf4UKZVBPYIgaglBmSF2Hi94s2PcIHhRGFjKYu+chjJdYfHn4rt3hB6eCKLJ8giVIIfgMa1ehDfZKA==}
     engines: {node: '>=0.10.0'}
+
+  relative-time-format@1.1.6:
+    resolution: {integrity: sha512-aCv3juQw4hT1/P/OrVltKWLlp15eW1GRcwP1XdxHrPdZE9MtgqFpegjnTjLhi2m2WI9MT/hQQtE+tjEWG1hgkQ==}
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -2888,6 +2922,11 @@ snapshots:
     dependencies:
       '@eslint/core': 0.14.0
       levn: 0.4.1
+
+  '@gsap/react@2.1.2(gsap@3.13.0)(react@19.1.0)':
+    dependencies:
+      gsap: 3.13.0
+      react: 19.1.0
 
   '@humanfs/core@0.19.1': {}
 
@@ -4332,6 +4371,8 @@ snapshots:
 
   graphemer@1.4.0: {}
 
+  gsap@3.13.0: {}
+
   handlebars@4.7.8:
     dependencies:
       minimist: 1.2.8
@@ -4607,6 +4648,10 @@ snapshots:
       get-proto: 1.0.1
       has-symbols: 1.1.0
       set-function-name: 2.0.2
+
+  javascript-time-ago@2.5.11:
+    dependencies:
+      relative-time-format: 1.1.6
 
   jiti@2.4.2: {}
 
@@ -5103,6 +5148,8 @@ snapshots:
   registry-url@3.1.0:
     dependencies:
       rc: 1.2.8
+
+  relative-time-format@1.1.6: {}
 
   resolve-from@4.0.0: {}
 

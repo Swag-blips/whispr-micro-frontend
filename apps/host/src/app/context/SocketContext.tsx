@@ -22,7 +22,7 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const socketRef = useRef<Socket | null>(null);
   const [connected, setConnected] = useState(false);
-  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
   const { user } = useAuth();
 
@@ -42,7 +42,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       socket.on("connect_error", (err: Error) => {
-        // the reason of the error, for example "xhr poll error"
         console.log(err.message);
       });
 
@@ -57,6 +56,15 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       socketRef.current = null;
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!socketRef.current) return;
+    socketRef.current.on("onlineUsers", (data) => {
+      const parsedData = JSON.parse(data);
+      setOnlineUsers(parsedData || []);
+    });
+  }, [user, socketRef]);
+
   return (
     <SocketContext.Provider
       value={{ onlineUsers, socket: socketRef.current, connected }}

@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
     ],
   },
   async rewrites() {
@@ -26,7 +30,7 @@ const nextConfig: NextConfig = {
             ? "http://localhost:3007/auth"
             : "https://whispr-auth.vercel.app/auth",
       },
-      { 
+      {
         source: "/auth/:path*",
         destination:
           process.env.NODE_ENV === "development"

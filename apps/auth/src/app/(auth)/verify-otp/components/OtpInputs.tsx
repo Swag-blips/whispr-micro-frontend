@@ -4,8 +4,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { resendOtp, verifyOtp } from "../services/service";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Generating } from "@repo/ui/icons/Generating";
-
+import { toastComponent } from "../../auth/utils/toast";
+import {
+  Error as ErrorIconComponent,
+  Loading,
+  Success,
+} from "@/app/components/icons";
 
 type Props = {
   email: string | string[] | undefined;
@@ -14,6 +18,7 @@ const OtpInputs = ({ email }: Props) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const otpBoxReference = useRef<HTMLInputElement[]>([]);
 
   const router = useRouter();
@@ -47,38 +52,61 @@ const OtpInputs = ({ email }: Props) => {
 
   const handleSubmit = async (email: string, otp: string) => {
     setLoading(true);
+    const toastId = toastComponent.loading("verifying otp", <Loading />);
     try {
       const response = await verifyOtp(email, otp);
 
       if (response.success) {
-        toast.success(response.message);
+        toastComponent.success(response.message, <Success />);
+ 
         router.push("/");
       } else if (!response.success && response.details) {
-        toast.error(response.details || "An error occured");
+        toastComponent.error(
+          response.details || "An error occured",
+          <ErrorIconComponent />
+        ); 
       } else {
-        toast.error(response.message);
-      }
-    } catch (error) { 
+        toastComponent.error(response.message, <ErrorIconComponent />);
+      } 
+    } catch (error) {
       console.error(error);
+      if (error instanceof Error) {
+        toastComponent.error(error.message, <ErrorIconComponent />);
+      }
     } finally {
       setLoading(false);
+      toast.dismiss(toastId);
     }
   };
 
   const handleResendOtp = async (email: string) => {
+    if (!loading) {
+      setLoading(true);
+    }
+    const toastId = toastComponent.loading("Resending otp", <Loading />);
+
     try {
       const response = await resendOtp(email);
 
       if (response.success) {
-        toast.success(response.message);
+        toastComponent.success(response.message, <Success />);
         router.push("/");
       } else if (!response.success && response.details) {
-        toast.error(response.details || "An error occured");
+        toastComponent.error(
+          response.details || "An error occured",
+          <ErrorIconComponent />
+        );
       } else {
-        toast.error(response.message);
+        toastComponent.error(response.message, <ErrorIconComponent />);
       }
     } catch (error) {
       console.error(error);
+
+      if (error instanceof Error) {
+        toastComponent.error(error.message, <ErrorIconComponent />);
+      }
+    } finally {
+      toast.dismiss(toastId);
     }
   };
 
@@ -102,43 +130,37 @@ const OtpInputs = ({ email }: Props) => {
             key={index}
             type="number"
             min="0"
-            max="9"
-            step="1"
+            max="9"      
+            step="1" 
             ref={(el) => {
               if (el) {
                 otpBoxReference.current[index] = el;
               }
             }}
-            className="outline-none focus:border-[#444CE7] text-center border rounded-lg border-[#868686] h-16 w-[71px] [&::-webkit-inner-spin-button]:appearance-none"
-          />
+            className="outline-none focus:border-[#444CE7] text-white text-2xl font-medium text-center border rounded-lg border-[#2D3438] h-16 w-[71px] [&::-webkit-inner-spin-button]:appearance-none"
+          /> 
         ))}
       </div>
       <button
         onClick={() => handleSubmit(email as string, otp.join(""))}
-        disabled={!enabled}
+        disabled={!enabled || loading}
         className={`mt-10 h-14 rounded-lg ${
-          enabled ? "bg-[#444CE7] " : "bg-[#C4C4C4]"
+          enabled ? "bg-[#444CE7] " : "bg-[#2A3035]"
         } text-white font-medium  cursor-pointer
          disabled:cursor-not-allowed  w-full`}
       >
-        {loading ? (
-          <>
-            <div className="flex items-center justify-center">
-              <Generating />
-            </div>
-          </>
-        ) : (
-          "verify"
-        )}
+        Verify
       </button>
-      <span
+      <button
+        disabled={loading}
         onClick={() => handleResendOtp(email as string)}
-        className="underline cursor-pointer flex items-center justify-center mt-8 text-[#444CE7]"
+        className="underline cursor-pointer flex w-full items-center justify-center mt-8 text-[#444CE7]"
       >
         Resend otp
-      </span>
+      </button>
     </div>
   );
 };
 
 export default OtpInputs;
+   
