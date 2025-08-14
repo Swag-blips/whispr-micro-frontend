@@ -1,19 +1,20 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useChatStore } from "../store/chats.store";
 import { useAuth } from "../context/AuthContext";
 import { getAvatar, getMetaAvatar } from "../utils/getUserAvatar";
 import { convertTime } from "../utils/convertDate";
 import { useSocket } from "../context/SocketContext";
 import { Message, User } from "../types/types";
-import { Check, CheckCheck } from "lucide-react";
+import { Check } from "lucide-react";
 import { getUserName } from "../utils/getUsername";
 import { mutate } from "swr";
 import { EmptyMessages } from "./EmptyMessages";
 import { Loading } from "./icons";
 import { Typing } from "./Typing";
 import DoubleTick from "./icons/DoubleTick";
+import { useTypingIndicator } from "../hooks/useTypingIndicator";
 
 interface MessagesProps {
   allMessages: Message[];
@@ -29,9 +30,9 @@ export const Messages = ({
   error,
 }: MessagesProps) => {
   const { currentChat, setCurrentChat } = useChatStore();
+  const { userTyping } = useTypingIndicator();
   const { socket } = useSocket();
   const { user } = useAuth();
-  const [userTyping, setUserTyping] = useState<User | User[] | null>(null);
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
@@ -262,40 +263,6 @@ export const Messages = ({
     };
   }, [currentChat?._id, socket]);
 
-  useEffect(() => {
-    socket?.on("userTyping", (data: { chatId: string; userId: string }) => {
-      console.log("DATA", data);
-      if (data.chatId !== currentChat?._id) return;
-
-      const user = Array.isArray(currentChat?.otherUsers)
-        ? currentChat.otherUsers.find((user) => data.userId === user._id)
-        : currentChat?.otherUsers;
-
-      if (!user) return;
-      setUserTyping(user);
-    });
-
-    socket?.on("stopTyping", (data: { chatId: string; userId: string }) => {
-      if (data.chatId !== currentChat?._id) return;
-
-      if (Array.isArray(userTyping)) {
-        const userTypingCopy = [...userTyping];
-
-        const filteredUserTyping = userTypingCopy.filter(
-          (user) => user._id !== data.userId
-        );
-
-        setUserTyping(filteredUserTyping);
-      } else {
-        setUserTyping(null);
-      }
-    });
-
-    return () => {
-      socket?.off("userTyping");
-      socket?.off("stopTyping");
-    };
-  }, [socket, currentChat]);
   if (isLoading)
     return (
       <div className="flex items-center flex-1 h-full flex-col justify-center">
@@ -303,7 +270,6 @@ export const Messages = ({
       </div>
     );
   if (error) return <p>{error.message || "Something went wrong"}</p>;
-  console.log("user is typing", userTyping);
 
   return (
     <div className="flex flex-col h-full overflow-y-auto chat-scrollbar px-4 ">
@@ -393,9 +359,13 @@ export const Messages = ({
                         {currentChat?.type !== "group" &&
                           msg.senderId === user?._id &&
                           (msg.status === "sent" ? (
-                            <Check size={16} color="#A0A4A6" className="shrink-0" />
+                            <Check
+                              size={16}
+                              color="#A0A4A6"
+                              className="shrink-0"
+                            />
                           ) : msg.status === "delivered" ? (
-                            <DoubleTick /> 
+                            <DoubleTick />
                           ) : (
                             <DoubleTick color="#4AA4F9" />
                           ))}
