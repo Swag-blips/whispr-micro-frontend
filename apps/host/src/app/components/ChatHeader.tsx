@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Ellipsis, Phone, Video, Plus, EllipsisVertical } from "lucide-react";
+import {  Phone, Video, Plus, EllipsisVertical } from "lucide-react";
 import { Chats, User } from "../types/types";
 import { getAvatar } from "../utils/getUserAvatar";
 import { useEffect, useState } from "react";

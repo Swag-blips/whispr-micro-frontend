@@ -14,7 +14,6 @@ export const ChatDetails = () => {
   const headerRef = useRef(null);
   const avatarRef = useRef(null);
   const usernameRef = useRef(null);
-  const onlineRef = useRef(null);
 
   const timeline = gsap.timeline({ defaults: { ease: "power2.out" } });
   useGSAP(() => {

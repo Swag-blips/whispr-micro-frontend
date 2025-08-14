@@ -10,7 +10,6 @@ import {
   Loading,
   Success,
 } from "@/app/components/icons";
-import { Welcome } from "@/app/components/shared/Welcome";
 
 type Props = {
   email: string | string[] | undefined;

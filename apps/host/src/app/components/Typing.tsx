@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useRef } from "react";
+import React from "react";
 import { User } from "../types/types";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";

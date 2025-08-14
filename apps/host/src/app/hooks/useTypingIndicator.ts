@@ -6,7 +6,7 @@ import { useChatStore } from "../store/chats.store";
 export const useTypingIndicator = () => {
   const [userTyping, setUserTyping] = useState<User | User[] | null>(null);
   const { socket } = useSocket();
-  const { currentChat, setCurrentChat } = useChatStore();
+  const { currentChat } = useChatStore();
   useEffect(() => {
     socket?.on("userTyping", (data: { chatId: string; userId: string }) => {
       console.log("DATA", data);

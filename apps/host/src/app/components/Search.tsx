@@ -7,7 +7,6 @@ import { User } from "../types/types";
 import { axiosInstance } from "../api/api";
 import { AxiosResponse } from "axios";
 import { useGSAP } from "@gsap/react";
-import Users from "./Users";
 import { SearchResults } from "./SearchResults";
 import gsap from "gsap";
 

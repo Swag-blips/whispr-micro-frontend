@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Socket } from "socket.io-client";
 import { useSocket } from "../context/SocketContext";
 import { useChatStore } from "../store/chats.store";
 import { Message } from "../types/types";

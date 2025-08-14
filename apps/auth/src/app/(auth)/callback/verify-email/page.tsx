@@ -1,7 +1,6 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { decodeJwt } from "./utils/decodeToken";
 import { verifyEmail } from "./services/service";
 import { ArrowLeft, Error, Success } from "@/app/components/icons";
 
@@ -11,8 +10,6 @@ const CallbackVerification = async ({
   searchParams: Promise<{ token: string }>;
 }) => {
   const token = await searchParams?.then((param) => param.token);
-
-  const email = decodeJwt(token as string);
 
   if (!token) {
     redirect("/auth");

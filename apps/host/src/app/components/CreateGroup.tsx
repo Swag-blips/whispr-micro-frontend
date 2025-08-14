@@ -1,5 +1,5 @@
 "use client";
-import { Ellipsis, Pencil } from "lucide-react";
+import { Ellipsis} from "lucide-react";
 import React, { useState } from "react";
 import GroupModal from "./GroupModal";
 

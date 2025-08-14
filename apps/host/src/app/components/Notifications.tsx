@@ -119,10 +119,13 @@ export const Notifications = ({ setOpen }: Props) => {
               t.visible ? "animate-enter" : "animate-leave"
             }`}
           >
-            <img
+            <Image
               src={sender.avatar}
               alt={sender.username}
-              className="w-8 h-8 rounded-full object-cover"
+              width={32}
+              height={32}
+              quality={100}
+              className=" rounded-full object-cover"
             />
             <p>You declined {sender.username} friend request</p>
 

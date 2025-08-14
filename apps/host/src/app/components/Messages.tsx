@@ -32,7 +32,7 @@ export const Messages = ({
 }: MessagesProps) => {
   const { currentChat } = useChatStore();
   const { userTyping } = useTypingIndicator();
-  useGroupAction(setAllMessages, allMessages);
+  useGroupAction(setAllMessages);
   const { user } = useAuth();
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);

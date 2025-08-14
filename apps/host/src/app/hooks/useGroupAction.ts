@@ -6,7 +6,6 @@ import { useEffect } from "react";
 
 export const useGroupAction = (
   setAllMessages: React.Dispatch<React.SetStateAction<Message[]>>,
-  allMessages: Message[]
 ) => {
   const { socket } = useSocket();
   const { mutate } = useSWRConfig();
