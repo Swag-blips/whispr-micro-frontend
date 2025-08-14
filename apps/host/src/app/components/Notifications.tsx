@@ -13,7 +13,7 @@ import en from "javascript-time-ago/locale/en";
 import { acceptFriendRequest, declineFriendRequest } from "../services/friend";
 import { AxiosError } from "axios";
 import { useSocket } from "../context/SocketContext";
-import { toastComponent } from "@repo/ui";
+import { toastComponent } from "@repo/ui/toast";
 import { Loading } from "./icons";
 import { Error as ErrorIcon } from "@repo/ui/icons/Error";
 import { Success } from "@repo/ui/icons/Success";

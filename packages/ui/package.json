@@ -4,7 +4,7 @@
   "private": true,
   "exports": {
     "./*": "./src/*.tsx",
-    ".": "./src/utils/toastComponent.ts"
+    "./toast": "./src/utils/toastComponent.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
