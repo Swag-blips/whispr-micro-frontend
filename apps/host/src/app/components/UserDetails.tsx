@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { toastComponent } from "@repo/ui/";
+import { toastComponent } from "@repo/ui/toast";
 import { Success } from "@repo/ui/icons/Success";
 import { Error as ErrorIcon } from "@repo/ui/icons/Error";
 import { Loading } from "./icons";
