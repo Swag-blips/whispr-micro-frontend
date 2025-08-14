@@ -1,6 +1,6 @@
 "use client";
 import { Mic } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { sendGroupMessage, sendMessage } from "../services/chats";
 import { useChatStore } from "../store/chats.store";
@@ -29,7 +29,6 @@ export const MessageInput = ({
   const { currentChat } = useChatStore();
   const { socket } = useSocket();
   const { user } = useAuth();
-  const [userIsTyping, setUserIsTyping] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
