@@ -161,7 +161,7 @@ const Chats = () => {
                     </p>
 
                     <div
-                      className={`bg-[#F25C5C] text-xs ${
+                      className={`bg-[#F25C5C] text-[11px] ${
                         chat.unreadMessages > 0
                           ? "opacity-100 translate-y-0"
                           : "opacity-0 -translate-y-1  "

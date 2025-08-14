@@ -3,7 +3,6 @@ import { User } from "../types/types";
 import { useSocket } from "../context/SocketContext";
 import { useChatStore } from "../store/chats.store";
 
-
 export const useTypingIndicator = () => {
   const [userTyping, setUserTyping] = useState<User | User[] | null>(null);
   const { socket } = useSocket();

@@ -3,7 +3,7 @@ import React from "react";
 const Star = () => {
   return (
     <svg
-      className="w-fit "
+      className="shrink-0 "
       width="22"
       height="23"
       viewBox="0 0 22 23"

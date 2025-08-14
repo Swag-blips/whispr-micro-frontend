@@ -15,6 +15,9 @@ import { Loading } from "./icons";
 import { Typing } from "./Typing";
 import DoubleTick from "./icons/DoubleTick";
 import { useTypingIndicator } from "../hooks/useTypingIndicator";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { useMessage } from "../hooks/useMessage";
 
 interface MessagesProps {
   allMessages: Message[];
@@ -32,8 +35,11 @@ export const Messages = ({
   const { currentChat, setCurrentChat } = useChatStore();
   const { userTyping } = useTypingIndicator();
   const { socket } = useSocket();
+
   const { user } = useAuth();
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
+  const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  useMessage(setAllMessages, allMessages);
 
   const scrollToBottom = () => {
     return lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -141,74 +147,6 @@ export const Messages = ({
   }, [allMessages]);
 
   useEffect(() => {
-    socket?.on(
-      "messagesDelivered",
-      (data: { chatId: string; messageIds: string[]; receiverId: string }) => {
-        console.log("incoming data", data);
-        if (data.chatId !== currentChat?._id) {
-          return;
-        }
-
-        console.log("updating state");
-        setAllMessages((prevMessages) =>
-          prevMessages.map((msg) => {
-            if (msg._id && data.messageIds.includes(msg._id)) {
-              return {
-                ...msg,
-                status: "delivered",
-              };
-            } else if (!msg._id && msg.status === "sent" && msg.receiverId) {
-              return {
-                ...msg,
-                status: "delivered",
-              };
-            } else if (
-              msg.status === "sent" &&
-              msg.receiverId === data.receiverId
-            ) {
-              return {
-                ...msg,
-                status: "delivered",
-              };
-            }
-
-            return msg;
-          })
-        );
-      }
-    );
-
-    return () => {
-      socket?.off("messagesDelivered");
-    };
-  }, [socket, currentChat?._id, allMessages]);
-  useEffect(() => {
-    socket?.on(
-      "messagesSeen",
-      (data: { receiverId: string; chatId: string }) => {
-        if (data.chatId !== currentChat?._id) {
-          return;
-        }
-        setAllMessages((prevMessages) =>
-          prevMessages.map((msg) => {
-            if (msg.status !== "seen" && msg.senderId !== data.receiverId) {
-              return {
-                ...msg,
-                status: "seen",
-              };
-            }
-            return msg;
-          })
-        );
-      }
-    );
-
-    return () => {
-      socket?.off("messagesSeen");
-    };
-  }, [currentChat?._id, socket]);
-
-  useEffect(() => {
     if (currentChat?.type !== "group") return;
     socket?.on(
       "memberRemoved",
@@ -263,6 +201,22 @@ export const Messages = ({
     };
   }, [currentChat?._id, socket]);
 
+  useEffect(() => {
+    if (allMessages.length === 0) return;
+    const lastIndex = allMessages.length - 1;
+    const lastMessageEl = messageRefs.current[lastIndex];
+    if (!lastMessageEl) return;
+
+    gsap.fromTo(
+      lastMessageEl,
+      {
+        y: 20,
+        opacity: 0,
+      },
+      { y: 0, opacity: 100, duration: 0.3, ease: "power1.out" }
+    );
+  }, [allMessages]);
+
   if (isLoading)
     return (
       <div className="flex items-center flex-1 h-full flex-col justify-center">
@@ -276,7 +230,13 @@ export const Messages = ({
       <div className="flex-col  flex-1 mt-8  flex gap-">
         {allMessages.length > 0 ? (
           allMessages.map((msg, index) => (
-            <div key={msg._id}>
+            <div
+              key={msg._id}
+              ref={(el) => {
+                messageRefs.current[index] = el;
+              }}
+              className="messages"
+            >
               {currentChat?.type === "group" && msg.messageType === "system" ? (
                 <div className="flex items-center gap-2 justify-center">
                   <Image

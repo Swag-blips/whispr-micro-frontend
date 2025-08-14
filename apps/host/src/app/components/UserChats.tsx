@@ -6,20 +6,26 @@ import { CreateGroup } from "./CreateGroup";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import { ActiveUsers } from "./ActiveUsers";
+import Image from "next/image";
 
 const UserChats = () => {
   const { user } = useAuth();
   const { onlineUsers } = useSocket();
+
+  console.log(user);
   return (
     <aside className="w-[423px] bg-[#101516]   flex-col overflow-y-auto h-full flex  border-r border-[#232728]">
       <div className="flex items-center px-4 py-6 border-b border-[#232728] justify-between">
-        <div className="flex items-center gap-2"> 
+        <div className="flex items-center gap-2">
           {user?.avatar && (
             <div className="relative">
-              <img
+              <Image
+                quality={100}
+                width={56}
+                height={56}
                 src={user.avatar}
                 alt="user"
-                className=" size-14 rounded-full"
+                className="  rounded-full"
               />
               {onlineUsers.includes(user._id) && (
                 <div className="size-2.5 bg-[#34C759] rounded-full absolute top-2 right-0" />

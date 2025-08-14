@@ -5,7 +5,7 @@ type Props = {
 const DoubleTick = ({ color }: Props) => {
   return (
     <svg
-      className="shrink-0"
+    className="shrink-0"
       width="16"
       height="16"
       viewBox="0 0 16 16"
