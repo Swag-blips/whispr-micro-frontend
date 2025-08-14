@@ -12,6 +12,7 @@ import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import { EmptyChats } from "./EmptyChats";
 import { Loading } from "./icons";
+import { convertTime } from "../utils/convertDate";
 
 const Chats = () => {
   const [allUserChats, setAllUserChats] = useState<ChatsType[]>([]);
@@ -65,7 +66,6 @@ const Chats = () => {
   }, [userChats, isLoading]);
 
   const handleUpdateChat = (data: { chatId: string; content: string }) => {
-    console.log("new chat for user");
     setAllUserChats((prevUserChats) =>
       prevUserChats.map((chat) => {
         if (chat._id === data.chatId) {
@@ -99,9 +99,9 @@ const Chats = () => {
 
   return (
     <div
-      className={`flex-col mt-8 flex justify-center px-4  ${!allUserChats.length && "flex-1 px-0"} gap-6`}
+      className={`flex-col mt-8 flex justify-center   ${!allUserChats.length && "flex-1 px-0"} gap-6`}
     >
-      <h2 className="text-white text-2xl font-medium">Messages</h2>
+      <h2 className="text-white text-2xl font-medium mx-4">Messages</h2>
       {allUserChats && allUserChats?.length > 0 ? (
         allUserChats
           ?.sort((a, b) => b.updatedAt - a.updatedAt)
@@ -113,7 +113,7 @@ const Chats = () => {
               <div
                 onClick={() => setCurrentChat(chat)}
                 key={chat._id}
-                className="flex cursor-pointer items-center justify-between"
+                className={`flex cursor-pointer transition-all duration-400 items-center justify-between ${currentChat?._id === chat._id ? "bg-[#181D21] mx-0 p-4" : "mx-4"} `}
               >
                 <div className="flex items-center  w-full justify-between">
                   <div className="flex items-center gap-2">
@@ -146,18 +146,30 @@ const Chats = () => {
                           ? chat.otherUsers.username
                           : chat.groupName}
                       </h1>
-                      <p className="text-[#A0A4A6] text-sm font-normal">
+                      <p
+                        className={`text-[#A0A4A6]  ${chat.lastMessage ? "w-[250px]  truncate " : ""}text-sm font-normal`}
+                      >
                         {chat.lastMessage ||
                           "This is the beginning of our Conversation"}
                       </p>
                     </div>
                   </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <p className="text-[#7C7F82] text-xs">
+                      {" "}
+                      {convertTime(chat.updatedAt)}
+                    </p>
 
-                  {chat.unreadMessages > 0 && (
-                    <div className="bg-red-500 text-sm flex items-center justify-center  size-6 rounded-full text-white">
+                    <div
+                      className={`bg-[#F25C5C] text-xs ${
+                        chat.unreadMessages > 0
+                          ? "opacity-100 translate-y-0"
+                          : "opacity-0 -translate-y-1  "
+                      } flex items-center justify-center  size-4 rounded-full text-white`}
+                    >
                       {chat.unreadMessages}
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             );

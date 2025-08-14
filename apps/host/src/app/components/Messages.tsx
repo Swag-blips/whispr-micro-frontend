@@ -12,6 +12,8 @@ import { getUserName } from "../utils/getUsername";
 import { mutate } from "swr";
 import { EmptyMessages } from "./EmptyMessages";
 import { Loading } from "./icons";
+import { Typing } from "./Typing";
+import DoubleTick from "./icons/DoubleTick";
 
 interface MessagesProps {
   allMessages: Message[];
@@ -304,8 +306,8 @@ export const Messages = ({
   console.log("user is typing", userTyping);
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto px-4 ">
-      <div className="flex-col  flex-1  flex gap-6">
+    <div className="flex flex-col h-full overflow-y-auto chat-scrollbar px-4 ">
+      <div className="flex-col  flex-1 mt-8  flex gap-">
         {allMessages.length > 0 ? (
           allMessages.map((msg, index) => (
             <div key={msg._id}>
@@ -328,18 +330,18 @@ export const Messages = ({
                 >
                   {currentChat?.type === "private" &&
                   !Array.isArray(currentChat.otherUsers) ? (
-                    <Image
-                      src={
-                        msg.senderId === user?._id
-                          ? getAvatar(user.avatar)
-                          : getAvatar(currentChat?.otherUsers.avatar)
-                      }
-                      alt={"user"}
-                      width={48}
-                      quality={100}
-                      height={48}
-                      className="rounded-full"
-                    />
+                    <>
+                      {msg.senderId !== user?._id && (
+                        <Image
+                          src={getAvatar(currentChat?.otherUsers.avatar)}
+                          alt={"user"}
+                          width={48}
+                          quality={100}
+                          height={48}
+                          className="rounded-full"
+                        />
+                      )}
+                    </>
                   ) : (
                     <Image
                       src={
@@ -366,11 +368,7 @@ export const Messages = ({
                     >
                       {currentChat?.type === "private" &&
                       !Array.isArray(currentChat.otherUsers) ? (
-                        <h2 className="font-medium">
-                          {msg.senderId === user?._id
-                            ? user.username
-                            : currentChat?.otherUsers.username}
-                        </h2>
+                        <></>
                       ) : (
                         <h2>
                           {msg.senderId === user?._id
@@ -381,30 +379,33 @@ export const Messages = ({
                               )}
                         </h2>
                       )}
+                    </div>
 
-                      <p className="text-[#8C8C8C] text-sm">
+                    <div className="flex flex-col gap-2">
+                      <p
+                        className={`${
+                          msg.senderId === user?._id
+                            ? "bg-[#14222B]  rounded-bl-xl ml-auto"
+                            : "bg-[#1A1F21] rounded-br-xl"
+                        } w-fit  text-white text-xs xl:text-sm leading-[150%] max-w-[400px]  rounded-t-xl  flex items-end gap-2 px-4 py-3`}
+                      >
+                        {msg.content}
+                        {currentChat?.type !== "group" &&
+                          msg.senderId === user?._id &&
+                          (msg.status === "sent" ? (
+                            <Check size={16} color="#A0A4A6" className="shrink-0" />
+                          ) : msg.status === "delivered" ? (
+                            <DoubleTick /> 
+                          ) : (
+                            <DoubleTick color="#4AA4F9" />
+                          ))}
+                      </p>
+                      <p
+                        className={`text-[#8C8C8C] ${msg.senderId === user?._id ? "ml-auto" : ""} xl:text-xs  text-[10px]`}
+                      >
                         {convertTime(msg.createdAt)}
                       </p>
                     </div>
-                    <p
-                      className={`${
-                        msg.senderId === user?._id
-                          ? "bg-[#444CE7] text-white ml-auto"
-                          : "bg-white text-black"
-                      } w-fit rounded-tr-lg rounded-br-lg flex items-center gap-1 rounded-bl-lg p-4`}
-                    >
-                      {currentChat?.type !== "group" &&
-                        msg.senderId === user?._id &&
-                        (msg.status === "sent" ? (
-                          <Check />
-                        ) : msg.status === "delivered" ? (
-                          <CheckCheck />
-                        ) : (
-                          ""
-                        ))}
-
-                      {msg.content}
-                    </p>
                   </div>
                 </div>
               )}
@@ -415,19 +416,10 @@ export const Messages = ({
         )}
 
         {allMessages && userTyping && !Array.isArray(userTyping) && (
-          <div className="flex items-center gap-2">
-            <Image
-              src={userTyping.avatar}
-              alt={userTyping.username}
-              width={32}
-              height={32}
-              quality={100}
-              className="rounded-full"
-            />
-          </div>
+          <Typing userTyping={userTyping} />
         )}
 
-        <div ref={lastMessageRef} />
+        <div ref={lastMessageRef} className="mb-18" />
       </div>
     </div>
   );
