@@ -13,3 +13,4 @@ export { default as Send } from "./Send";
 export { default as Picture } from "./Picture";
 export { default as Doc } from "./Doc";
 export { default as Star } from "./Star";
+export { default as Emoji } from "./Emoji";

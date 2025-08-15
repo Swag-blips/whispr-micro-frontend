@@ -182,7 +182,7 @@ export const AuthForm = () => {
             activeTab === "signup"
               ? "bg-[#1E252A] text-white"
               : "text-[#7A8288] "
-          }  cursor-pointer  py-2 px-4   rounded-[20px]`}
+          }  cursor-pointer  py-2 px-4 transition-all duration-300   rounded-[20px]`}
         >
           sign up
         </button>
@@ -196,7 +196,7 @@ export const AuthForm = () => {
             activeTab === "login"
               ? "bg-[#1E252A] text-white"
               : "text-[#7A8288] "
-          } cursor-pointer  py-2 px-4    rounded-[20px]`}
+          } cursor-pointer  py-2 px-4 transition-all duration-300    rounded-[20px]`}
         >
           login
         </button>

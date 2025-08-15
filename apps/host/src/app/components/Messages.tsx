@@ -72,7 +72,7 @@ export const Messages = ({
 
   return (
     <div className="flex flex-col h-full overflow-y-auto chat-scrollbar px-4 ">
-      <div className="flex-col  flex-1 mt-8  flex gap-">
+      <div className="flex-col  flex-1 mt-8  flex gap-4">
         {allMessages.length > 0 ? (
           allMessages.map((msg, index) => {
             return (

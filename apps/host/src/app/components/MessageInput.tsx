@@ -9,7 +9,9 @@ import { mutate } from "swr";
 import { v4 as uuid } from "uuid";
 import { useAuth } from "../context/AuthContext";
 import { Message } from "../types/types";
-import { Attachment, Send } from "./icons";
+import { Attachment, Emoji, Send } from "./icons";
+import { AttachmentOpen } from "./AttachmentOpen";
+import { SelectedImages } from "./SelectedImages";
 
 function debounce(cb: (...args: unknown[]) => void, delay = 1000) {
   let timeout: NodeJS.Timeout;
@@ -31,7 +33,9 @@ export const MessageInput = ({
   const { user } = useAuth();
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [attachmentOpen, setAttachmentOpen] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
+  const fileRef = useRef<HTMLInputElement | null>(null);
   const debounceStopTypingRef = useRef(
     debounce(() => {
       socket?.emit("stopTyping", {
@@ -41,6 +45,18 @@ export const MessageInput = ({
     }, 500)
   );
 
+  const handleImagePicker = () => {
+    fileRef.current?.click();
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const imageUrl = URL.createObjectURL(event.target.files[0]);
+      setImages((prevImages) => [...prevImages, imageUrl]);
+    }
+    setAttachmentOpen(false);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setContent(value);
@@ -49,6 +65,12 @@ export const MessageInput = ({
       socket?.emit("startTyping", { chatId: currentChat?._id });
       debounceStopTypingRef.current();
     }
+  };
+
+  const handleRemoveImage = (imageUrl: string) => {
+    setImages((prevImages) => prevImages.filter((image) => image !== imageUrl));
+
+    return;
   };
 
   const handleSendMessage = async () => {
@@ -99,13 +121,37 @@ export const MessageInput = ({
   };
 
   return (
-    <>
-      <div className="bg-[#101516] flex items-center gap-2 p-4 h-[72px] w-full">
-        <div className="size-8 bg-[#181D21] rounded-full flex items-center justify-center ">
+    <div
+      className={`bg-[#101516] ${images.length ? "flex-col px-4 pb-4 pt-2 " : "h-[72px] items-center p-4"} transition-all duration-300 relative flex  gap-2   w-full`}
+    >
+      {images.length > 0 && (
+        <SelectedImages
+          selectedImages={images}
+          handleRemoveImages={handleRemoveImage}
+        />
+      )}
+      {attachmentOpen && (
+        <AttachmentOpen handleImagePicker={handleImagePicker} />
+      )}
+
+      <div className="flex items-center gap-2 w-full">
+        <div
+          onClick={() =>
+            setAttachmentOpen((prevAttachmentState) => !prevAttachmentState)
+          }
+          className={`size-8 cursor-pointer  ${attachmentOpen ? "bg-[#1F242A]" : "bg-[#181D21] "} transition-all duration-300 rounded-full flex items-center justify-center `}
+        >
           <Attachment />
         </div>
 
-        <div className="bg-[#1A1F20] p-3  rounded-xl flex items-center w-full">
+        <input
+          type="file"
+          onChange={handleImageChange}
+          accept="image/*"
+          hidden
+          ref={fileRef}
+        />
+        <div className="bg-[#1A1F20] relative p-3  rounded-xl flex items-center w-full">
           <div className="flex flex-1 items-center gap-2">
             <input
               type="text"
@@ -115,6 +161,8 @@ export const MessageInput = ({
               className="placeholder:text-xs w-full placeholder:text-[#999999] text-white outline-none"
             />
           </div>
+
+          <Emoji />
         </div>
 
         <Mic color="#868686" />
@@ -126,6 +174,6 @@ export const MessageInput = ({
           <Send />
         </div>
       </div>
-    </>
+    </div>
   );
 };
