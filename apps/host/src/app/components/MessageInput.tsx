@@ -12,6 +12,8 @@ import { Message } from "../types/types";
 import { Attachment, Emoji, Send } from "./icons";
 import { AttachmentOpen } from "./AttachmentOpen";
 import { SelectedImages } from "./SelectedImages";
+import { toastComponent } from "@repo/ui/toast";
+import { Error as ErrorIcon } from "@repo/ui/icons/Error";
 
 function debounce(cb: (...args: unknown[]) => void, delay = 1000) {
   let timeout: NodeJS.Timeout;
@@ -35,6 +37,7 @@ export const MessageInput = ({
   const [loading, setLoading] = useState(false);
   const [attachmentOpen, setAttachmentOpen] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const debounceStopTypingRef = useRef(
     debounce(() => {
@@ -46,12 +49,22 @@ export const MessageInput = ({
   );
 
   const handleImagePicker = () => {
+    if (images.length >= 3) {
+      toastComponent.error(
+        "You can only send 3 images at a time",
+        <ErrorIcon />,
+        1500
+      );
+
+      return;
+    }
     fileRef.current?.click();
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const imageUrl = URL.createObjectURL(event.target.files[0]);
+      setFiles((prevFile) => [...prevFile, event.target.files![0]]);
       setImages((prevImages) => [...prevImages, imageUrl]);
     }
     setAttachmentOpen(false);
@@ -119,6 +132,9 @@ export const MessageInput = ({
       setContent("");
     }
   };
+
+  console.log("images", images);
+  console.log("files", files);
 
   return (
     <div
