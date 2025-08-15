@@ -155,28 +155,40 @@ export const Messages = ({
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <p
+                        <div
                           className={`${
                             msg.senderId === user?._id
-                              ? "bg-[#14222B]  rounded-bl-xl ml-auto"
-                              : "bg-[#1A1F21] rounded-br-xl"
-                          } w-fit  text-white text-xs xl:text-sm leading-[150%] max-w-[400px]  rounded-t-xl  flex items-end gap-2 px-4 py-3`}
-                        >
-                          {msg.content}
-                          {currentChat?.type !== "group" &&
-                            msg.senderId === user?._id &&
-                            (msg.status === "sent" ? (
-                              <Check
-                                size={16}
-                                color="#A0A4A6"
-                                className="shrink-0"
+                              ? "bg-[#14222B] items-end rounded-bl-xl ml-auto"
+                              : "bg-[#1A1F21] items-start rounded-br-xl "
+                          } w-fit ${msg.file ? "flex-col flex p-1" : "px-4 py-3"} text-white text-xs xl:text-sm leading-[150%] max-w-[400px]  rounded-t-xl  flex  gap-2 `}
+                        >   
+                          {msg.file && (
+                            <div className="w-[126px] h-[107px]">
+                              <img
+                                src={msg.file}
+                                alt="image"
+                                className="rounded-xl w-full h-full object-cover"
                               />
-                            ) : msg.status === "delivered" ? (
-                              <DoubleTick />
-                            ) : (
-                              <DoubleTick color="#4AA4F9" />
-                            ))}
-                        </p>
+                            </div>
+                          )}
+
+                          <div className={`flex  items-end gap-2 `}>
+                            <p className={``}> {msg.content && msg.content}</p>
+                            {currentChat?.type !== "group" &&
+                              msg.senderId === user?._id &&
+                              (msg.status === "sent" ? (
+                                <Check
+                                  size={16}
+                                  color="#A0A4A6"
+                                  className="shrink-0"
+                                />
+                              ) : msg.status === "delivered" ? (
+                                <DoubleTick />
+                              ) : (
+                                <DoubleTick color="#4AA4F9" />
+                              ))}
+                          </div>
+                        </div>
                         <p
                           className={`text-[#8C8C8C] ${msg.senderId === user?._id ? "ml-auto" : ""} xl:text-xs  text-[10px]`}
                         >

@@ -20,13 +20,25 @@ export const getUserChats = async () => {
 
 export const sendMessage = async (
   chatId: string,
-  content: string,
-  tempId: string
+
+  tempId: string,
+  content?: string,
+  file?: string,
+  fileType?: string,
+  fileName?: string
 ) => {
+  console.log("payload", {
+    chatId,
+    tempId,
+    content,
+  });
   try {
     const response = (await axiosInstance.post(`/chat/message/${chatId}`, {
-      content,
+      ...(content && { content }),
       tempId,
+      ...(file && { file }),
+      ...(fileType && { fileType }),
+      ...(fileName && { fileName }),
     })) as AxiosResponse<{ success: boolean; message: string }>;
 
     return response.data;
@@ -37,13 +49,20 @@ export const sendMessage = async (
 };
 export const sendGroupMessage = async (
   chatId: string,
-  content: string,
-  tempId: string
+
+  tempId: string,
+  content?: string,
+  file?: string,
+  fileType?: string,
+  fileName?: string
 ) => {
   try {
     const response = (await axiosInstance.post(`/chat/group/${chatId}`, {
-      content,
+      ...(content && { content }),
       tempId,
+      ...(file && { file }),
+      ...(fileType && { fileType }),
+      ...(fileName && { fileName }),
     })) as AxiosResponse<{ success: boolean; message: string }>;
 
     return response.data;

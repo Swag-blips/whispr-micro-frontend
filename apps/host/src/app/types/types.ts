@@ -54,6 +54,7 @@ export interface Message {
   senderId: string;
   createdAt: Date | string;
   updatedAt?: Date;
+  file?: string;
   __v?: number;
   otherUserDetails?: User;
   receivers?: string[];
