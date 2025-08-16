@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import { getUserChats } from "../services/chats";
 import { Chats as ChatsType } from "../types/types";
 import { useChatStore } from "../store/chats.store";
@@ -29,6 +30,8 @@ const Chats = () => {
   const { setCurrentChat, currentChat } = useChatStore();
   const { socket, onlineUsers } = useSocket();
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     if (user?._id) {
       initNotifications(user._id);
@@ -36,8 +39,34 @@ const Chats = () => {
   }, [user]);
 
   useEffect(() => {
+    audioRef.current = new Audio(
+      "https://res.cloudinary.com/dh3c9ay9z/video/upload/v1755364016/notification-sound_txordh.mp3"
+    );
+
+    const unlockSound = () => {
+      audioRef.current?.play().catch(() => {
+        console.log("Sound unlocked after user interaction");
+      });
+    };
+
+    document.addEventListener("click", unlockSound, { once: true });
+
+    return () => {
+      document.removeEventListener("click", unlockSound);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!notifications.length) return;
     const latestNotification = notifications[notifications.length - 1];
+
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch((err) => {
+        console.warn("Notification sound blocked:", err);
+      });
+    }
+
     toast.custom((t) => (
       <div
         className={`p-4 rounded-xl flex items-center gap-3  bg-[#1E1E1E] text-[#EDEDED]  shadow-[0px_4px_12px_rgba(0,0,0,0.3)] ${
@@ -49,7 +78,7 @@ const Chats = () => {
           alt={latestNotification.sender.username}
           className="w-8 h-8 rounded-full object-cover"
         />
-        <span className="">
+        <span>
           <span>{latestNotification.sender.username}</span>{" "}
           {latestNotification.type === "sendFriendRequest"
             ? "sent you a friend request"
@@ -58,7 +87,6 @@ const Chats = () => {
       </div>
     ));
   }, [notifications]);
-
   useEffect(() => {
     if (userChats?.chats.length) {
       setAllUserChats(userChats.chats);
@@ -89,6 +117,7 @@ const Chats = () => {
       socket?.off("addToChats");
     };
   }, [socket]);
+
   if (isLoading)
     return (
       <div className="flex items-center justify-center flex-1">

@@ -99,14 +99,14 @@ export const Message = ({ msg, messageRefs, index }: Props) => {
                   isSender
                     ? "bg-[#14222B] items-end rounded-bl-xl ml-auto"
                     : "bg-[#1A1F21] items-start rounded-br-xl "
-                } ${msg.fileType?.startsWith("image/") ? "flex-col flex p-1" : "px-4 py-3"} text-white text-xs xl:text-sm leading-[150%] max-w-[400px] rounded-t-xl flex gap-2 break-words whitespace-pre-line`}
+                } ${msg.fileType?.startsWith("image/") ? "flex-col flex  p-1" : "px-4 py-3"} text-white text-xs xl:text-sm leading-[150%] max-w-[400px] rounded-t-xl flex gap-2 `}
               >
                 {msg.file && <FileMessage msg={msg} />}
 
-                <div className={`flex w-full items-end gap-2`}>
+                <div className={`flex  items-end gap-2`}>
                   <p className="break-all"> {msg.content && msg.content}</p>
                   {currentChat?.type !== "group" &&
-                    msg.senderId === user?._id &&
+                    isSender &&
                     (msg.status === "sent" ? (
                       <Check size={16} color="#A0A4A6" className="shrink-0" />
                     ) : msg.status === "delivered" ? (
