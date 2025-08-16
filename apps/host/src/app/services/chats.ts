@@ -25,7 +25,8 @@ export const sendMessage = async (
   content?: string,
   file?: string,
   fileType?: string,
-  fileName?: string
+  fileName?: string,
+  fileSize?: number
 ) => {
   console.log("payload", {
     chatId,
@@ -39,6 +40,7 @@ export const sendMessage = async (
       ...(file && { file }),
       ...(fileType && { fileType }),
       ...(fileName && { fileName }),
+      ...(fileSize && { fileSize }),
     })) as AxiosResponse<{ success: boolean; message: string }>;
 
     return response.data;
@@ -54,7 +56,8 @@ export const sendGroupMessage = async (
   content?: string,
   file?: string,
   fileType?: string,
-  fileName?: string
+  fileName?: string,
+  fileSize?: number
 ) => {
   try {
     const response = (await axiosInstance.post(`/chat/group/${chatId}`, {
@@ -63,6 +66,7 @@ export const sendGroupMessage = async (
       ...(file && { file }),
       ...(fileType && { fileType }),
       ...(fileName && { fileName }),
+      ...(fileSize && { fileSize }),
     })) as AxiosResponse<{ success: boolean; message: string }>;
 
     return response.data;

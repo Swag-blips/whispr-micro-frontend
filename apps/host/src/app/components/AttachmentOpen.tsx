@@ -26,7 +26,7 @@ export const AttachmentOpen = ({ handleImagePicker }: Props) => {
         <Picture color="#D0D3D4" width={16} height={16} />
         <p className="text-[#D0D3D4] text-xs">Picture or video</p>
       </div>
-      <div className="flex items-center transition-all duration-300 hover:bg-[#2E3235] rounded-br-lg  cursor-pointer pl-3 pt-2   pb-3 gap-2">
+      <div onClick={handleImagePicker} className="flex items-center transition-all duration-300 hover:bg-[#2E3235] rounded-br-lg  cursor-pointer pl-3 pt-2   pb-3 gap-2">
         <Doc color="#D0D3D4" width={16} height={16} />
         <p className="text-[#D0D3D4] text-xs">Document</p>
       </div>

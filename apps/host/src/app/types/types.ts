@@ -55,6 +55,9 @@ export interface Message {
   createdAt: Date | string;
   updatedAt?: Date;
   file?: string;
+  fileType?: string;
+  fileSize?: number;
+  fileName?: string;
   __v?: number;
   otherUserDetails?: User;
   receivers?: string[];

@@ -44,7 +44,7 @@ export const MessageInput = ({
     }[]
   >([]);
   const [files, setFiles] = useState<
-    { file: File | null; image: string }[] | null
+    { file: File | null; image?: string; type: string; size: number }[] | null
   >(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const debounceStopTypingRef = useRef(
@@ -95,11 +95,13 @@ export const MessageInput = ({
         },
       };
 
-      const imageUrls: { file: string; fileType: string; fileName: string }[] =
-        [];
+      const imageUrls: {
+        file: string;
+        fileType: string;
+        fileName: string;
+        fileSize: number;
+      }[] = [];
       for await (const file of files) {
-        console.log("current iteration", currentIteration);
-
         if (!file.file) continue;
         formData.append("file", file.file);
         formData.append(
@@ -119,6 +121,7 @@ export const MessageInput = ({
               file: data,
               fileType: files[currentIteration].file!.type,
               fileName: files[currentIteration].file!.name,
+              fileSize: files[currentIteration].file!.size,
             });
           })
           .catch((err) => {
@@ -126,9 +129,10 @@ export const MessageInput = ({
             throw new Error(err);
           });
         formData = new FormData();
+        currentIteration++;
       }
 
-      setImages([]);
+      setImages([]); 
       setFiles(null);
 
       return imageUrls;
@@ -138,10 +142,11 @@ export const MessageInput = ({
   };
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
       const imageUrl = URL.createObjectURL(event.target.files[0]);
       setFiles((prevFile) => [
         ...(prevFile ?? []),
-        { file: event.target.files![0], image: imageUrl },
+        { file: file, image: imageUrl, type: file.type, size: file.size },
       ]);
       setImages((prevImages) => [...prevImages, { imageUrl, progress: 0 }]);
     }
@@ -180,7 +185,7 @@ export const MessageInput = ({
     if (!currentChat?._id || !user?._id) return;
 
     let tempImages:
-      | { file: string; fileType: string; fileName: string }[]
+      | { file: string; fileType: string; fileName: string; fileSize: number }[]
       | undefined = [];
     if (images.length) {
       tempImages = await handleImageUpload();
@@ -188,6 +193,7 @@ export const MessageInput = ({
     let tempId = uuid();
     if (tempImages?.length) {
       for (const image of tempImages) {
+        console.log("image", image);
         addMessage({
           _id: tempId,
           file: image.file,
@@ -208,7 +214,8 @@ export const MessageInput = ({
               content,
               image.file,
               image.fileType,
-              image.fileName
+              image.fileName,
+              image.fileSize
             );
             if (!message.success) {
               toast.error(message.message);
@@ -220,7 +227,8 @@ export const MessageInput = ({
               tempId,
               image.file,
               image.fileType,
-              image.fileName
+              image.fileName,
+              image.fileSize
             );
             if (message.success) {
               toast.success(message.message);
@@ -276,7 +284,7 @@ export const MessageInput = ({
       mutate("userChats");
     } catch (error) {
       console.error(error);
-      if (error instanceof Error) { 
+      if (error instanceof Error) {
         toast.error(error.message);
       }
     } finally {
@@ -285,15 +293,13 @@ export const MessageInput = ({
     }
   };
 
-  console.log("images", images);
-  console.log("files", files);
-
   return (
     <div
       className={`bg-[#101516] ${images.length ? "flex-col px-4 pb-4 pt-2 " : "h-[72px] items-center p-4"} transition-all duration-300 relative flex  gap-2   w-full`}
     >
       {images.length > 0 && (
         <SelectedImages
+          files={files}
           selectedImages={images}
           handleRemoveImages={handleRemoveImage}
         />
@@ -315,7 +321,7 @@ export const MessageInput = ({
         <input
           type="file"
           onChange={handleImageChange}
-          accept="image/*"
+          accept="image/*, application/pdf,.doc,.docx"
           hidden
           ref={fileRef}
         />
