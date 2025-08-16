@@ -13,6 +13,7 @@ import { Attachment, Emoji, Send } from "./icons";
 import { AttachmentOpen } from "./AttachmentOpen";
 import { SelectedFiles } from "./SelectedFiles";
 import { useImageUpload } from "../hooks/useImageUpload";
+import EmojiPicker from "emoji-picker-react";
 
 function debounce(cb: (...args: unknown[]) => void, delay = 1000) {
   let timeout: NodeJS.Timeout;
@@ -35,6 +36,7 @@ export const MessageInput = ({
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [attachmentOpen, setAttachmentOpen] = useState(false);
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
   const {
     fileRef,
@@ -181,6 +183,8 @@ export const MessageInput = ({
     }
   };
 
+  console.log("Content", content);
+
   return (
     <div
       className={`bg-[#101516] ${images.length ? "flex-col px-4 pb-4 pt-2 " : "h-[72px] items-center p-4"} transition-all duration-300 relative flex  gap-2   w-full`}
@@ -194,6 +198,16 @@ export const MessageInput = ({
       )}
       {attachmentOpen && (
         <AttachmentOpen handleImagePicker={handleImagePicker} />
+      )}
+      {emojiPickerOpen && (
+        <div className="absolute right-15 -top-[22rem]">
+          <EmojiPicker
+            height={"350px"}
+            onEmojiClick={(emoji) => {
+              setContent((prevContent) => prevContent + " " + emoji.emoji);
+            }}
+          />
+        </div>
       )}
 
       <div className="flex items-center gap-2 w-full">
@@ -224,7 +238,14 @@ export const MessageInput = ({
             />
           </div>
 
-          <Emoji />
+          <div
+            className="cursor-pointer"
+            onClick={() =>
+              setEmojiPickerOpen((prevEmojiPickerOpen) => !prevEmojiPickerOpen)
+            }
+          >
+            <Emoji />
+          </div>
         </div>
 
         <Mic color="#868686" />
