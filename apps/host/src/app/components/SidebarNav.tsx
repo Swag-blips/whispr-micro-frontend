@@ -32,8 +32,7 @@ export default function SidebarNav() {
   }, [data]);
 
   useEffect(() => {
-
-    if(!notificationStore.length) return
+    if (!notificationStore.length) return;
     const handleUpdateNotification = () => {
       setNotificationCount(
         (prevNotificationCount) => prevNotificationCount + 1
@@ -41,8 +40,6 @@ export default function SidebarNav() {
     };
     handleUpdateNotification();
   }, [notificationStore]);
-
-  console.log("notification count", notificationCount);
 
   return (
     <nav className="flex flex-col items-center gap-8">
