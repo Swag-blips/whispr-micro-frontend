@@ -1,5 +1,5 @@
 import Image from "next/image";
-import {  Phone, Video, Plus, EllipsisVertical } from "lucide-react";
+import { Phone, Video, Plus, EllipsisVertical } from "lucide-react";
 import { Chats, User } from "../types/types";
 import { getAvatar } from "../utils/getUserAvatar";
 import { useEffect, useState } from "react";
@@ -161,23 +161,19 @@ export const ChatHeader = ({ currentChat }: Props) => {
                   : currentChat.groupName}
               </h1>
 
-              {!userIsTyping && (
-                <p className="text-[#A0A4A6] text-xs font-normal">
-                  {currentChat.type === "private" &&
-                  !Array.isArray(currentChat.otherUsers)
-                    ? currentChat.otherUsers.bio
-                    : currentChat.bio}
-                </p>
-              )}
-
               <p
-                className={`text-[#00FF7F] text-xs  transition-all duration-300 ${
+                className={`text-xs transition-all duration-300 ${
                   userIsTyping
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 -translate-y-1  "
+                    ? "text-[#00FF7F] opacity-100 translate-y-0"
+                    : "text-[#A0A4A6] opacity-100 translate-y-0"
                 }`}
               >
-                Typing
+                {userIsTyping
+                  ? "Typing"
+                  : currentChat.type === "private" &&
+                      !Array.isArray(currentChat.otherUsers)
+                    ? currentChat.otherUsers.bio
+                    : currentChat.bio}
               </p>
             </div>
           </div>

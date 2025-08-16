@@ -71,3 +71,19 @@ export interface Message {
     | "user_promoted";
   meta?: { memberId: string; memberAvatar: string };
 }
+
+
+export type TempMessage = {
+  _id: string;
+  tempId: string;
+  chatId: string;
+  content: string;
+  senderId: string;
+  messageType: "text";
+  status: "sent" | "delivered" | "seen";
+  createdAt: string;
+  file?: string;
+  fileType?: string;
+  fileName?: string;
+  fileSize?: number;
+};
