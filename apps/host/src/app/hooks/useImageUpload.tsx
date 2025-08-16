@@ -13,8 +13,7 @@ export function useImageUpload() {
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const handleImagePicker = () => {
-
-    if ( files && files?.length >= 3) {
+    if (files && files?.length >= 3) {
       toastComponent.error("You can only send 3 files at a time", <Error />);
       return;
     }
@@ -47,7 +46,7 @@ export function useImageUpload() {
   const handleImageUpload = async () => {
     if (!files?.length) return [];
 
-    let uploaded: {
+    const uploaded: {
       file: string;
       fileType: string;
       fileName: string;
@@ -58,7 +57,7 @@ export function useImageUpload() {
       const file = files[i].file;
       if (!file) continue;
 
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("file", file);
       formData.append(
         "upload_preset",
