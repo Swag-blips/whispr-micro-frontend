@@ -11,7 +11,7 @@ import { useAuth } from "../context/AuthContext";
 import { Message } from "../types/types";
 import { Attachment, Emoji, Send } from "./icons";
 import { AttachmentOpen } from "./AttachmentOpen";
-import { SelectedImages } from "./SelectedImages";
+import { SelectedFiles } from "./SelectedFiles";
 import { toastComponent } from "@repo/ui/toast";
 import { Error as ErrorIcon } from "@repo/ui/icons/Error";
 import axios, { AxiosProgressEvent } from "axios";
@@ -57,7 +57,8 @@ export const MessageInput = ({
   );
 
   const handleImagePicker = () => {
-    if (images.length >= 3) {
+    if (!files) return;
+    if (files.length >= 3) {
       toastComponent.error(
         "You can only send 3 images at a time",
         <ErrorIcon />,
@@ -69,12 +70,12 @@ export const MessageInput = ({
     fileRef.current?.click();
   };
 
-  const handleImageUpload = async () => { 
+  const handleImageUpload = async () => {
     if (!images.length || !files?.length) return;
 
     try {
       let formData = new FormData();
-    
+
       let currentIteration = 0;
 
       const config = {
@@ -132,7 +133,7 @@ export const MessageInput = ({
         currentIteration++;
       }
 
-      setImages([]); 
+      setImages([]);
       setFiles(null);
 
       return imageUrls;
@@ -298,7 +299,7 @@ export const MessageInput = ({
       className={`bg-[#101516] ${images.length ? "flex-col px-4 pb-4 pt-2 " : "h-[72px] items-center p-4"} transition-all duration-300 relative flex  gap-2   w-full`}
     >
       {images.length > 0 && (
-        <SelectedImages
+        <SelectedFiles
           files={files}
           selectedImages={images}
           handleRemoveImages={handleRemoveImage}

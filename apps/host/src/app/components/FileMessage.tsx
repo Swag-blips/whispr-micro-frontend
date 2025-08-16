@@ -1,7 +1,7 @@
 import React from "react";
 import { Message } from "../types/types";
 import { DocumentAlt } from "./icons";
-import { bytesToMegabytes } from "./SelectedImages";
+import { bytesToMegabytes } from "./SelectedFiles";
 import { ArrowDownToLine } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
