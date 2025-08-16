@@ -17,7 +17,10 @@ export const Chat = () => {
   const { currentChat } = useChatStore();
   const { socket } = useSocket();
   const { user } = useAuth();
-  const { data, isLoading, error } = useSWR(currentChat?._id, getMessages);
+  const { data, isLoading, error } = useSWR(currentChat?._id, getMessages, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: true,
+  });
 
   const [allMessages, setAllMessages] = useState<Message[]>([]);
 

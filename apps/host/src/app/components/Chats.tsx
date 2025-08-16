@@ -155,7 +155,7 @@ const Chats = () => {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <p className="text-[#7C7F82] text-xs">
+                    <p className="text-[#7C7F82]  text-right text-xs">
                       {" "}
                       {convertTime(chat.updatedAt)}
                     </p>

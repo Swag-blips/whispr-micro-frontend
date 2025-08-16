@@ -69,7 +69,7 @@ export const MessageInput = ({
     fileRef.current?.click();
   };
 
-  const handleImageUpload = async () => {
+  const handleImageUpload = async () => { 
     if (!images.length || !files?.length) return;
 
     try {
