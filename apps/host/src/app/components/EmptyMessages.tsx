@@ -13,8 +13,8 @@ export const EmptyMessages = () => {
     ? onlineUsers.includes(currentChat?.otherUsers._id)
     : null;
   return (
-    <div className="flex w-fit  flex-1 flex-col gap-6 items-start justify-end">
-      {!Array.isArray(currentChat.otherUsers) && (
+    <div className="flex w-fit  flex-1 flex-col gap-6 items-start justify-end mb-4">
+      {!Array.isArray(currentChat.otherUsers) && ( 
         <div className="relative">
           <Image
             src={currentChat.otherUsers.avatar}

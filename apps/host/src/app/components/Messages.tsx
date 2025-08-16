@@ -6,16 +6,17 @@ import { useAuth } from "../context/AuthContext";
 import { getAvatar, getMetaAvatar } from "../utils/getUserAvatar";
 import { convertTime } from "../utils/convertDate";
 import { Message } from "../types/types";
-import { Check } from "lucide-react";
+import { ArrowDownToLine, Check } from "lucide-react";
 import { getUserName } from "../utils/getUsername";
 import { EmptyMessages } from "./EmptyMessages";
-import { Loading } from "./icons";
+import { DocumentAlt, Loading } from "./icons";
 import { Typing } from "./Typing";
 import DoubleTick from "./icons/DoubleTick";
 import { useTypingIndicator } from "../hooks/useTypingIndicator";
 import gsap from "gsap";
 import { useMessage } from "../hooks/useMessage";
 import { useGroupAction } from "../hooks/useGroupAction";
+import { bytesToMegabytes } from "./SelectedImages";
 
 interface MessagesProps {
   allMessages: Message[];
@@ -46,20 +47,25 @@ export const Messages = ({
     scrollToBottom();
   }, [allMessages]);
 
+  const prevLastMessageId = useRef<string | null>(null);
+
   useEffect(() => {
     if (allMessages.length === 0) return;
-    const lastIndex = allMessages.length - 1;
-    const lastMessageEl = messageRefs.current[lastIndex];
-    if (!lastMessageEl) return;
 
-    gsap.fromTo(
-      lastMessageEl,
-      {
-        y: 20,
-        opacity: 0,
-      },
-      { y: 0, opacity: 100, duration: 0.3, ease: "power1.out" }
-    );
+    const lastIndex = allMessages.length - 1;
+    const lastMessage = allMessages[lastIndex];
+
+    if (lastMessage._id !== prevLastMessageId.current) {
+      const lastMessageEl = messageRefs.current[lastIndex];
+      if (lastMessageEl) {
+        gsap.fromTo(
+          lastMessageEl,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.3, ease: "power1.out" }
+        );
+      }
+      prevLastMessageId.current = lastMessage._id;
+    }
   }, [allMessages]);
 
   if (isLoading)
@@ -70,9 +76,11 @@ export const Messages = ({
     );
   if (error) return <p>{error.message || "Something went wrong"}</p>;
 
+  console.log(allMessages);
+
   return (
     <div className="flex flex-col h-full overflow-y-auto chat-scrollbar px-4 ">
-      <div className="flex-col  flex-1 mt-8  flex gap-">
+      <div className="flex-col  flex-1 mt-8  flex gap-4">
         {allMessages.length > 0 ? (
           allMessages.map((msg, index) => {
             return (
@@ -153,30 +161,76 @@ export const Messages = ({
                           </h2>
                         )}
                       </div>
-
+ 
                       <div className="flex flex-col gap-2">
-                        <p
+                        <div
                           className={`${
                             msg.senderId === user?._id
-                              ? "bg-[#14222B]  rounded-bl-xl ml-auto"
-                              : "bg-[#1A1F21] rounded-br-xl"
-                          } w-fit  text-white text-xs xl:text-sm leading-[150%] max-w-[400px]  rounded-t-xl  flex items-end gap-2 px-4 py-3`}
+                              ? "bg-[#14222B] items-end rounded-bl-xl ml-auto"
+                              : "bg-[#1A1F21] items-start rounded-br-xl "
+                          } ${msg.fileType?.startsWith("image/") ? "flex-col flex p-1" : "px-4 py-3"} text-white text-xs xl:text-sm leading-[150%] max-w-[400px] rounded-t-xl flex gap-2 break-words whitespace-pre-line`}
                         >
-                          {msg.content}
-                          {currentChat?.type !== "group" &&
-                            msg.senderId === user?._id &&
-                            (msg.status === "sent" ? (
-                              <Check
-                                size={16}
-                                color="#A0A4A6"
-                                className="shrink-0"
-                              />
-                            ) : msg.status === "delivered" ? (
-                              <DoubleTick />
-                            ) : (
-                              <DoubleTick color="#4AA4F9" />
-                            ))}
-                        </p>
+                          {msg.file && (
+                            <>
+                              {msg.fileType?.startsWith("image/") && (
+                                <div className="w-[126px] h-[107px]">
+                                  <img
+                                    src={msg.file}
+                                    alt="image"
+                                    className="rounded-xl w-full h-full object-cover"
+                                  />
+                                </div>
+                              )}
+                              {msg.fileType?.startsWith("application/") && (
+                                <div
+                                  className={`p-2.5 rounded-xl flex items-end justify-between 
+                                      ${
+                                        msg.senderId === user?._id
+                                          ? "bg-[#1E2D38]"
+                                          : "bg-[#2A2F32]"
+                                      }`}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <DocumentAlt />
+
+                                    <div className="flex flex-col gap-1">
+                                      <h2 className="max-w-[400px] text-sm font-medium truncate">
+                                        {msg.fileName}
+                                      </h2>
+                                      <p className="text-[#868686] text-xs">
+                                        {bytesToMegabytes(msg.fileSize)} mb
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <ArrowDownToLine
+                                    size={16}
+                                    className="shrink-0 cursor-pointer"
+                                  />
+                                </div>
+                              )}
+                            </>
+                          )}
+
+                          <div className={`flex w-full items-end gap-2`}>
+                            <p className="break-all">
+                              {" "}
+                              {msg.content && msg.content}
+                            </p>
+                            {currentChat?.type !== "group" &&
+                              msg.senderId === user?._id &&
+                              (msg.status === "sent" ? (
+                                <Check
+                                  size={16}
+                                  color="#A0A4A6"
+                                  className="shrink-0"
+                                />
+                              ) : msg.status === "delivered" ? (
+                                <DoubleTick />
+                              ) : (
+                                <DoubleTick color="#4AA4F9" />
+                              ))}
+                          </div>
+                        </div>
                         <p
                           className={`text-[#8C8C8C] ${msg.senderId === user?._id ? "ml-auto" : ""} xl:text-xs  text-[10px]`}
                         >
@@ -193,11 +247,17 @@ export const Messages = ({
           <EmptyMessages />
         )}
 
-        {allMessages && userTyping && !Array.isArray(userTyping) && (
+        {allMessages.length && userTyping && !Array.isArray(userTyping) ? (
           <Typing userTyping={userTyping} />
+        ) : (
+          ""
         )}
 
-        <div ref={lastMessageRef} className="mb-18" />
+        {allMessages.length ? (
+          <div ref={lastMessageRef} className="mb-18" />
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
