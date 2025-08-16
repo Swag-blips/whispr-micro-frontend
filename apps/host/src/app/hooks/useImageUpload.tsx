@@ -62,7 +62,7 @@ export function useImageUpload() {
       formData.append(
         "upload_preset",
         process.env.NEXT_PUBLIC_UPLOAD_PRESET as string
-      );
+      );    
 
       const config = {
         onUploadProgress: (progressEvent: AxiosProgressEvent) => {
