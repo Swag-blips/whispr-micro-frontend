@@ -20,7 +20,7 @@ export function bytesToMegabytes(bytes: number | undefined) {
   return (bytes / bytesInMegabyte).toFixed(2);
 }
 
-export const SelectedImages = ({
+export const SelectedFiles = ({
   selectedImages,
   handleRemoveImages,
   files,

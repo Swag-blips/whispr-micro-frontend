@@ -168,9 +168,8 @@ export const Notifications = ({ setOpen }: Props) => {
 
   const timeAgo = new TimeAgo("en-US");
 
-  console.log("notifications", notifications);
   return (
-    <div className="fixed inset-0 bg-white/5 py-4 backdrop-blur-sm flex flex-col gap-6 items-center justify-center  top-0 z-50">
+    <div className="fixed inset-0 bg-white/5 py-4 backdrop-blur-sm flex flex-col gap-6 items-center justify-center  top-0 z-[100]">
       <div className="bg-[#101516] h-[484px] flex flex-col min-w-[389px] px-4 gap-6 py-4 rounded-lg">
         <div className=" flex items-center justify-between ">
           <h2 className="text-white text-2xl font-medium">Notifications</h2>
