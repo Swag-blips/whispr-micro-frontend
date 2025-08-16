@@ -2,7 +2,7 @@ import { CircleX } from "lucide-react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import React from "react";
-import { Doc, DocumentAlt } from "./icons";
+import {  DocumentAlt } from "./icons";
 
 type Props = {
   files:

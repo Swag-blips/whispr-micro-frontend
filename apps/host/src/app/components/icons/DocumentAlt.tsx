@@ -1,8 +1,6 @@
-import React from "react";
 
-type Props = {};
 
-const DocumentAlt = (props: Props) => {
+const DocumentAlt = () => {
   return (
     <svg
       width="32"

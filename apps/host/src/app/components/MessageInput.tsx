@@ -74,7 +74,7 @@ export const MessageInput = ({
 
     try {
       let formData = new FormData();
-      let data = "";
+    
       let currentIteration = 0;
 
       const config = {
