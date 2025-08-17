@@ -14,7 +14,7 @@ export const FileMessage = ({ msg }: Props) => {
   return (
     <>
       {msg.fileType?.startsWith("image/") && (
-        <div className="w-[126px] h-[107px]">
+        <div className="w-[180px] h-[107px]">
           <img
             src={msg.file}
             alt="image"

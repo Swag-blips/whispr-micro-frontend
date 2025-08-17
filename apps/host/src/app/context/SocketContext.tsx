@@ -65,6 +65,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }, [user, socketRef]);
 
+  console.log("onlineUsers", onlineUsers)
+
   return (
     <SocketContext.Provider
       value={{ onlineUsers, socket: socketRef.current, connected }}

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Phone, Video, Plus, EllipsisVertical } from "lucide-react";
+import { Phone, Video, Plus, EllipsisVertical, X } from "lucide-react";
 import { Chats, User } from "../types/types";
 import { getAvatar } from "../utils/getUserAvatar";
 import { useEffect, useState } from "react";
@@ -18,6 +18,9 @@ import { AxiosError } from "axios";
 import { useSocket } from "../context/SocketContext";
 import { GroupChatImage } from "./GroupChatImage";
 import { AddMemberModal } from "./AddMemberModal";
+import { UserAdd, UserRemove } from "./icons";
+import { RemoveMemberModal } from "./RemoveMemberModal";
+import { useAuth } from "../context/AuthContext";
 
 type Props = {
   currentChat: Chats;
@@ -30,6 +33,12 @@ export const ChatHeader = ({ currentChat }: Props) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedToAdd, setSelectedToAdd] = useState<string[]>([]);
   const [userIsTyping, setUserIsTyping] = useState(false);
+  const [openActionDropdown, setOpenActionDropDown] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [selectedToRemove, setSelectedToRemove] = useState<string[]>([]);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+  const { user } = useAuth();
 
   const { onlineUsers, socket } = useSocket();
 
@@ -102,6 +111,37 @@ export const ChatHeader = ({ currentChat }: Props) => {
       } else if (error instanceof Error) {
         toast.error(error.message);
       }
+    }
+  };
+
+  // Group members for RemoveMemberModal (exclude current user)
+  const groupMembers = Array.isArray(currentChat.otherUsers)
+    ? currentChat.otherUsers.filter((u: User) => u._id !== user?._id)
+    : [];
+
+  const handleRemoveMembers = async () => {
+    if (selectedToRemove.length === 0) return;
+    setIsRemoving(true);
+    try {
+      for (const memberId of selectedToRemove) {
+        const data = await handleRemoveUser(memberId);
+        if (data?.success) {
+          toast.success("User successfully removed");
+        }
+      }
+      setShowRemoveModal(false);
+      setSelectedToRemove([]);
+      mutate("userChats");
+      setCurrentChat(null);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message || "Failed to remove members");
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    } finally {
+      setIsRemoving(false);
     }
   };
 
@@ -187,10 +227,54 @@ export const ChatHeader = ({ currentChat }: Props) => {
             <Phone color="#E2E8F0" fill="#E2E8F0" size={24} />
           </div>
 
-          <div className="border cursor-pointer border-[#232728] flex items-center justify-center rounded-full size-12">
-            <button onClick={handleEllipsisClick}>
-              <EllipsisVertical color="#E2E8F0" size={24} />
+          <div className="border  relative cursor-pointer border-[#232728] flex items-center justify-center rounded-full size-12">
+            <button
+              onClick={() =>
+                setOpenActionDropDown(
+                  (prevOpenActionDropdown) => !prevOpenActionDropdown
+                )
+              }
+            >
+              <EllipsisVertical
+                color="#E2E8F0"
+                size={24}
+                className="cursor-pointer"
+              />
             </button>
+
+            {openActionDropdown && (
+              <div className="absolute top-15 right-2 border border-[#232728] rounded-xl bg-[#1A1F21] w-[145px]  flex flex-col">
+                {currentChat.type === "group" && (
+                  <>
+                    <div
+                      onClick={() =>
+                        setShowAddModal((prevAddModal) => !prevAddModal)
+                      }
+                      className="flex items-center rounded-t-xl  hover:bg-[#2E3235] border-b border-[#232728] p-2 gap-2"
+                    >
+                      <UserAdd />
+                      <p className="text-xs text-[#D0D3D4]">Add user</p>
+                    </div>
+                    <div
+                      onClick={() =>
+                        setShowRemoveModal(
+                          (prevRemoveModal) => !prevRemoveModal
+                        )
+                      }
+                      className="flex items-center hover:bg-[#2E3235]  border-b border-[#232728] p-2 gap-2"
+                    >
+                      <UserRemove />
+                      <p className="text-xs text-[#D0D3D4]">Remove user</p>
+                    </div>
+                  </>
+                )}
+
+                <div className="flex items-center hover:bg-[#2E3235] rounded-b-xl p-2 gap-2">
+                  <X size={16} className="shrink-0" color="#D0D3D4" />
+                  <p className="text-xs text-[#D0D3D4]">close chat details</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -288,6 +372,18 @@ export const ChatHeader = ({ currentChat }: Props) => {
           handleAddMembers={handleAddMembers}
           isAdding={isAdding}
           loadingFriends={loadingFriends}
+        />
+      )}
+
+      {showRemoveModal && (
+        <RemoveMemberModal
+          setShowRemoveModal={setShowRemoveModal}
+          groupMembers={groupMembers}
+          selectedToRemove={selectedToRemove}
+          setSelectedToRemove={setSelectedToRemove}
+          handleRemoveMembers={handleRemoveMembers}
+          isRemoving={isRemoving}
+          loadingMembers={loadingMembers}
         />
       )}
     </>

@@ -99,7 +99,7 @@ export const Message = ({ msg, messageRefs, index }: Props) => {
                   isSender
                     ? "bg-[#14222B] items-end rounded-bl-xl ml-auto"
                     : "bg-[#1A1F21] items-start rounded-br-xl "
-                } ${msg.fileType?.startsWith("image/") ? "flex-col flex  p-1" : "px-4 py-3"} text-white text-xs xl:text-sm leading-[150%] max-w-[400px] rounded-t-xl flex gap-2 `}
+                } ${msg.fileType?.startsWith("image/") ? "flex-col flex w-[180px] p-1" : "px-4 max-w-[400px] py-3"} text-white text-xs xl:text-sm leading-[150%] rounded-t-xl flex gap-2 `}
               >
                 {msg.file && <FileMessage msg={msg} />}
 
