@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { EmptyChats } from "./EmptyChats";
 import { Loading } from "./icons";
 import { convertTime } from "../utils/convertDate";
+import { GroupChatImage } from "./GroupChatImage";
 
 const Chats = () => {
   const [allUserChats, setAllUserChats] = useState<ChatsType[]>([]);
@@ -163,9 +164,7 @@ const Chats = () => {
                         )}
                       </div>
                     ) : (
-                      <div className="bg-[#F5F5F5] flex items-center justify-center size-12 rounded-full">
-                        {chat.groupName[0]}
-                      </div>
+                      <GroupChatImage chat={chat} />
                     )}
 
                     <div className="flex flex-col gap-1">

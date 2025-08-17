@@ -2,6 +2,7 @@ import React from "react";
 import { useChatStore } from "../store/chats.store";
 import Image from "next/image";
 import { useSocket } from "../context/SocketContext";
+import { GroupChatImage } from "./GroupChatImage";
 
 export const EmptyMessages = () => {
   const { currentChat } = useChatStore();
@@ -14,7 +15,7 @@ export const EmptyMessages = () => {
     : null;
   return (
     <div className="flex w-fit  flex-1 flex-col gap-6 items-start justify-end mb-4">
-      {!Array.isArray(currentChat.otherUsers) && ( 
+      {!Array.isArray(currentChat.otherUsers) ? (
         <div className="relative">
           <Image
             src={currentChat.otherUsers.avatar}
@@ -29,6 +30,8 @@ export const EmptyMessages = () => {
             <div className="size-2.5 bg-[#34C759] rounded-full absolute top-3 right-2" />
           )}
         </div>
+      ) : (
+        <GroupChatImage chat={currentChat} from="messages" />
       )}
 
       <div className="flex flex-col gap-2">
