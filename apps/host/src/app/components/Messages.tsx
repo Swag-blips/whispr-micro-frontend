@@ -67,7 +67,6 @@ export const Messages = ({
     );
   if (error) return <p>{error.message || "Something went wrong"}</p>;
 
-  console.log(allMessages);
 
   return (
     <div className="flex flex-col h-full overflow-y-auto chat-scrollbar px-4 ">
@@ -80,7 +79,7 @@ export const Messages = ({
           <EmptyMessages />
         )}
 
-        {allMessages.length && userTyping && !Array.isArray(userTyping) ? (
+        {allMessages.length && userTyping && Array.isArray(userTyping) ? (
           <Typing userTyping={userTyping} />
         ) : (
           ""

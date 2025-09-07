@@ -2,11 +2,9 @@ import Image from "next/image";
 import React from "react";
 import { getAvatar } from "../utils/getUserAvatar";
 import { User } from "../types/types";
-import { UserRemove, Loading } from "./icons";
+import { Loading } from "./icons";
 import { useSocket } from "../context/SocketContext";
-import { useChatStore } from "../store/chats.store";
 
-// Props for RemoveMemberModal
 interface Props {
   setShowRemoveModal: (state: boolean) => void;
   groupMembers: User[];

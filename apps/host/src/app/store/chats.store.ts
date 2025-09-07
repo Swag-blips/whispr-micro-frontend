@@ -10,5 +10,6 @@ export const useChatStore = create<ChatStore>((set) => ({
   currentChat: null,
   setCurrentChat: (chat) => {
     set({ currentChat: chat });
+    localStorage.setItem("currentChat", JSON.stringify(chat));
   },
 }));

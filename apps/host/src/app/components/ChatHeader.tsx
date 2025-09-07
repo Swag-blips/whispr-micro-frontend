@@ -152,19 +152,24 @@ export const ChatHeader = ({ currentChat }: Props) => {
   }, [currentChat]);
 
   useEffect(() => {
-    socket?.on("userTyping", (data) => {
-      console.log("DATA", data);
-      if (data.chatId !== currentChat._id) return;
+    const handleUserTyping = (data: { chatId: string }) => {
+      if (data.chatId !== currentChat._id || currentChat.type === "group")
+        return;
       setUserIsTyping(true);
-    });
+    };
 
-    socket?.on("stopTyping", () => {
+    const handleStopTyping = (data: { chatId: string }) => {
+      if (data.chatId !== currentChat._id || currentChat.type === "group")
+        return;
       setUserIsTyping(false);
-    });
+    };
+
+    socket?.on("userTyping", handleUserTyping);
+    socket?.on("stopTyping", handleStopTyping);
 
     return () => {
-      socket?.off("userTyping");
-      socket?.off("stopTyping");
+      socket?.off("userTyping", handleUserTyping);
+      socket?.off("stopTyping", handleStopTyping);
     };
   }, [currentChat, socket]);
 

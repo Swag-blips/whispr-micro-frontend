@@ -8,39 +8,55 @@ export const useTypingIndicator = () => {
   const { socket } = useSocket();
   const { currentChat } = useChatStore();
   useEffect(() => {
-    socket?.on("userTyping", (data: { chatId: string; userId: string }) => {
-      console.log("DATA", data);
+    const handleUserTyping = (data: { chatId: string; userId: string }) => {
       if (data.chatId !== currentChat?._id) return;
 
       const user = Array.isArray(currentChat?.otherUsers)
-        ? currentChat.otherUsers.find((user) => data.userId === user._id)
+        ? currentChat.otherUsers.find((u) => u._id === data.userId)
         : currentChat?.otherUsers;
 
-      if (!user) return;
-      setUserTyping(user);
-    });
+      console.log("got to user", user);
 
-    socket?.on("stopTyping", (data: { chatId: string; userId: string }) => {
+      if (!user) return;
+
+      setUserTyping((prev) => {
+        if (!prev) return [user];
+        if (Array.isArray(prev)) {
+          if (prev.some((u) => u._id === user._id)) return prev;
+          return [...prev, user];
+        }
+        return [prev, user];
+      });
+    };
+
+    const handleStopTyping = (data: { chatId: string; userId: string }) => {
       if (data.chatId !== currentChat?._id) return;
 
-      if (Array.isArray(userTyping)) {
-        const userTypingCopy = [...userTyping];
+      setUserTyping((prev) => {
+        if (!prev) return null;
+        if (Array.isArray(prev)) {
+          const filtered = prev.filter((u) => u._id !== data.userId);
+          return filtered.length > 0 ? filtered : null;
+        }
+        return prev._id === data.userId ? null : prev;
+      });
+    };
 
-        const filteredUserTyping = userTypingCopy.filter(
-          (user) => user._id !== data.userId
-        );
-
-        setUserTyping(filteredUserTyping);
-      } else {
-        setUserTyping(null);
-      }
+    socket?.on("userTyping", (data) => {
+      console.log("receive event");
+      handleUserTyping(data);
     });
+    socket?.on("stopTyping", handleStopTyping);
 
     return () => {
-      socket?.off("userTyping");
-      socket?.off("stopTyping");
+      socket?.off("userTyping", handleUserTyping);
+      socket?.off("stopTyping", handleStopTyping);
     };
   }, [socket, currentChat]);
 
+
+
+  console.log("userTyping", userTyping)
   return { userTyping };
 };
+

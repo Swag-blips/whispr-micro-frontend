@@ -61,7 +61,10 @@ export const MessageInput = ({
     const value = e.target.value;
     setContent(value);
     if (value.trim()) {
-      socket?.emit("startTyping", { chatId: currentChat?._id });
+      socket?.emit("startTyping", {
+        chatId: currentChat?._id,
+        userId: user?._id,
+      });
       debounceStopTypingRef.current();
     }
   };
