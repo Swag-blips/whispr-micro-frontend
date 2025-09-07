@@ -152,9 +152,10 @@ export const ChatHeader = ({ currentChat }: Props) => {
   }, [currentChat]);
 
   useEffect(() => {
-    const handleUserTyping = (data: { chatId: string }) => {
+    const handleUserTyping = (data: { chatId: string, userId:string }) => {
       if (data.chatId !== currentChat._id || currentChat.type === "group")
         return;
+      if(data.userId === user?._id) return
       setUserIsTyping(true);
     };
 

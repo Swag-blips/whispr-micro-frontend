@@ -2,14 +2,20 @@ import { useEffect, useState } from "react";
 import { User } from "../types/types";
 import { useSocket } from "../context/SocketContext";
 import { useChatStore } from "../store/chats.store";
+import { useAuth } from "../context/AuthContext";
 
 export const useTypingIndicator = () => {
   const [userTyping, setUserTyping] = useState<User | User[] | null>(null);
   const { socket } = useSocket();
   const { currentChat } = useChatStore();
+  const { user:authUser } = useAuth();
+
   useEffect(() => {
     const handleUserTyping = (data: { chatId: string; userId: string }) => {
+      console.log("USER TYPING", data, currentChat);
       if (data.chatId !== currentChat?._id) return;
+
+      if (data.userId === authUser?._id) return;
 
       const user = Array.isArray(currentChat?.otherUsers)
         ? currentChat.otherUsers.find((u) => u._id === data.userId)
@@ -54,9 +60,6 @@ export const useTypingIndicator = () => {
     };
   }, [socket, currentChat]);
 
-
-
-  console.log("userTyping", userTyping)
+  console.log("userTyping", userTyping);
   return { userTyping };
 };
-
