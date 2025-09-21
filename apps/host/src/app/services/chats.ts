@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { axiosInstance } from "../api/api";
 import { Chats, CreateGroupArgs, Message } from "../types/types";
 
@@ -148,6 +148,54 @@ export const addGroupMembers = async (
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+};
+
+export const starMessage = async (
+  url: string,
+  { arg }: { arg: { messageId: string } }
+) => {
+  try {
+    const response = await axiosInstance.post(url, arg);
+
+    return response;
+  } catch (error) {
+    console.error("Error starring message:", error);
+    throw error;
+  }
+};
+
+export const getStarredMessages = async (chatId: string) => {
+  try {
+    const response = (await axiosInstance.get(
+      `/chat/star-message/${chatId}`
+    )) as AxiosResponse<{
+      success: boolean;
+      message: string;
+      data: Message[];
+    }>;
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching starred messages:", error);
+    throw error;
+  }
+};
+
+export const getChatFiles = async (chatId: string) => {
+  try {
+    const response = (await axiosInstance.get(
+      `/chat/chat-files/${chatId}`
+    )) as AxiosResponse<{
+      success: boolean;
+      message: string;
+      data: Message[];
+    }>;
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching chat files:", error);
     throw error;
   }
 };

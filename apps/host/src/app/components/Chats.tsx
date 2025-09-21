@@ -141,7 +141,10 @@ const Chats = () => {
               : null;
             return (
               <div
-                onClick={() => setCurrentChat(chat)}
+                onClick={() => {
+                  if (currentChat?._id === chat._id) return;
+                  setCurrentChat(chat);
+                }}
                 key={chat._id}
                 className={`flex cursor-pointer transition-all duration-400 items-center justify-between ${currentChat?._id === chat._id ? "bg-[#181D21] mx-0 p-4" : "mx-4"} `}
               >
