@@ -169,7 +169,7 @@ export const starMessage = async (
 export const getStarredMessages = async (chatId: string) => {
   try {
     const response = (await axiosInstance.get(
-      `/chat/star-message/${chatId}`
+      `/chat/starred-messages/${chatId}`
     )) as AxiosResponse<{
       success: boolean;
       message: string;
