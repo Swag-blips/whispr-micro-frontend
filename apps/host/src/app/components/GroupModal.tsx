@@ -33,6 +33,7 @@ const GroupModal = ({ open, onClose }: GroupModalProps) => {
   if (!open) return null;
   if (error) return <p>{error}</p>;
 
+  const friendsCount = friends?.friends?.length || 0;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md relative">
@@ -109,10 +110,15 @@ const GroupModal = ({ open, onClose }: GroupModalProps) => {
                 }
               }
             }}
-            disabled={isCreating}
+            disabled={isCreating || friendsCount < 2}
           >
             {isCreating ? "Creating..." : "Create Group"}
           </button>
+          {friendsCount < 2 && (
+            <p className="text-xs text-[#8C8C8C] mt-1">
+              You need at least 2 friends to create a group.
+            </p>
+          )}
         </div>
       </div>
     </div>

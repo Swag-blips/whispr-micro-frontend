@@ -12,9 +12,8 @@ const UserChats = () => {
   const { user } = useAuth();
   const { onlineUsers } = useSocket();
 
-  console.log(user);
   return (
-    <aside className="w-[423px] bg-[#101516]   flex-col overflow-y-auto h-full flex  border-r border-[#232728]">
+    <aside className="w-[423px] bg-[#101516]  chat-scrollbar   flex-col overflow-y-auto h-full flex  border-r border-[#232728]">
       <div className="flex items-center px-4 py-6 border-b border-[#232728] justify-between">
         <div className="flex items-center gap-2">
           {user?.avatar && (

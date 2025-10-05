@@ -70,8 +70,8 @@ export interface Message {
     | "group_renamed"
     | "user_promoted";
   meta?: { memberId: string; memberAvatar: string };
+  starredBy?: string[];
 }
-
 
 export type TempMessage = {
   _id: string;

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Message as MessageType } from "../types/types";
 import { EmptyMessages } from "./EmptyMessages";
 import { Loading } from "./icons";
@@ -8,7 +8,7 @@ import { useTypingIndicator } from "../hooks/useTypingIndicator";
 import gsap from "gsap";
 import { useMessage } from "../hooks/useMessage";
 import { useGroupAction } from "../hooks/useGroupAction";
-import { Message } from "./Message";
+import Message from "./Message";
 
 interface MessagesProps {
   allMessages: MessageType[];
@@ -25,6 +25,7 @@ export const Messages = ({
 }: MessagesProps) => {
   const { userTyping } = useTypingIndicator();
   useGroupAction(setAllMessages);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
   const messageRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -67,20 +68,27 @@ export const Messages = ({
     );
   if (error) return <p>{error.message || "Something went wrong"}</p>;
 
-  console.log(allMessages);
-
   return (
     <div className="flex flex-col h-full overflow-y-auto chat-scrollbar px-4 ">
       <div className="flex-col  flex-1 mt-8  flex gap-4">
         {allMessages.length > 0 ? (
           allMessages.map((msg, index) => {
-            return <Message key={msg._id} msg={msg} messageRefs={messageRefs} index={index} />;
+            return (
+              <Message
+                key={msg._id}
+                msg={msg}
+                messageRefs={messageRefs}
+                index={index}
+                hoveredIndex={hoveredIndex}
+                setHoveredIndex={setHoveredIndex}
+              />
+            );
           })
         ) : (
           <EmptyMessages />
         )}
 
-        {allMessages.length && userTyping && !Array.isArray(userTyping) ? (
+        {allMessages.length && userTyping && Array.isArray(userTyping) ? (
           <Typing userTyping={userTyping} />
         ) : (
           ""

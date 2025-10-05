@@ -15,3 +15,5 @@ export { default as Doc } from "./Doc";
 export { default as Star } from "./Star";
 export { default as Emoji } from "./Emoji";
 export { default as DocumentAlt } from "./DocumentAlt";
+export { default as UserAdd } from "./UserAdd";
+export { default as UserRemove } from "./UserRemove";

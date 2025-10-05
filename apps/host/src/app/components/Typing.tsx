@@ -5,7 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 type Props = {
-  userTyping: User;
+  userTyping: User[];
 };
 export const Typing = ({ userTyping }: Props) => {
   useGSAP(() => {
@@ -22,20 +22,23 @@ export const Typing = ({ userTyping }: Props) => {
   }, []);
   return (
     <div className="flex items-center gap-2 mt-4 main-container">
-      <Image
-        src={userTyping.avatar}
-        alt={userTyping.username}
-        width={32}
-        height={32}
-        quality={100}
-        className="rounded-full"
-      />
-
-      <div className="size-12 bg-[#1A1F21]  flex items-center gap-1 justify-center rounded-t-lg rounded-br-lg">
-        <div className="bg-[#E0E0E0] size-[6px] rounded-full dot1" />
-        <div className="bg-[#E0E0E0] size-[6px] rounded-full dot2" />
-        <div className="bg-[#E0E0E0] size-[6px] rounded-full dot3" />
-      </div>
+      {userTyping.map((user) => (
+        <React.Fragment key={user._id}>
+          <Image
+            src={user.avatar}
+            alt={user.username}
+            width={32}
+            height={32}
+            quality={100}
+            className="rounded-full"
+          />
+          <div className="size-12 bg-[#1A1F21]  flex items-center gap-1 justify-center rounded-t-lg rounded-br-lg">
+            <div className="bg-[#E0E0E0] size-[6px] rounded-full dot1" />
+            <div className="bg-[#E0E0E0] size-[6px] rounded-full dot2" />
+            <div className="bg-[#E0E0E0] size-[6px] rounded-full dot3" />
+          </div>
+        </React.Fragment>
+      ))}
     </div>
   );
 };

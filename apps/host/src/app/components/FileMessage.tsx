@@ -14,7 +14,7 @@ export const FileMessage = ({ msg }: Props) => {
   return (
     <>
       {msg.fileType?.startsWith("image/") && (
-        <div className="w-[126px] h-[107px]">
+        <div className="w-full h-[157px] ">
           <img
             src={msg.file}
             alt="image"
@@ -24,12 +24,9 @@ export const FileMessage = ({ msg }: Props) => {
       )}
       {msg.fileType?.startsWith("application/") && (
         <div
-          className={`p-2.5 rounded-xl flex items-end justify-between 
-                                        ${
-                                          msg.senderId === user?._id
-                                            ? "bg-[#1E2D38]"
-                                            : "bg-[#2A2F32]"
-                                        }`}
+          className={`p-2.5 rounded-xl flex items-end justify-between ${
+            msg.senderId === user?._id ? "bg-[#1E2D38]" : "bg-[#2A2F32]"
+          }`}
         >
           <div className="flex items-center gap-2">
             <DocumentAlt />
