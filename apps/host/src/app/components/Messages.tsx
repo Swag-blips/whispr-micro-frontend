@@ -8,7 +8,7 @@ import { useTypingIndicator } from "../hooks/useTypingIndicator";
 import gsap from "gsap";
 import { useMessage } from "../hooks/useMessage";
 import { useGroupAction } from "../hooks/useGroupAction";
-import { Message } from "./Message";
+import Message from "./Message";
 
 interface MessagesProps {
   allMessages: MessageType[];

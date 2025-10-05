@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { axiosInstance } from "../api/api";
 import { Chats, CreateGroupArgs, Message } from "../types/types";
 

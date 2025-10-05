@@ -1,8 +1,6 @@
 import React from "react";
 
-type Props = {};
-
-const UserRemove = (props: Props) => {
+const UserRemove = () => {
   return (
     <svg
       width="16"

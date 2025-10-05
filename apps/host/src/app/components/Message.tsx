@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { MouseEventHandler, SetStateAction, useState } from "react";
+import React, { SetStateAction } from "react";
 import { Check, Star } from "lucide-react";
 import { getUserName } from "../utils/getUsername";
 import { getAvatar, getMetaAvatar } from "../utils/getUserAvatar";
@@ -27,7 +27,7 @@ type Props = {
   setHoveredIndex: React.Dispatch<SetStateAction<number | null>>;
 };
 
-export const Message = React.memo(
+const Message = 
   ({ msg, messageRefs, index, setHoveredIndex, hoveredIndex }: Props) => {
     const { currentChat } = useChatStore();
     const { user } = useAuth();
@@ -62,10 +62,9 @@ export const Message = React.memo(
     ) => {
       e.preventDefault();
 
-
-      if(index === hoveredIndex) {
-        setHoveredIndex(null) 
-        return
+      if (index === hoveredIndex) {
+        setHoveredIndex(null);
+        return;
       }
       if (senderId === user?._id) return;
       setHoveredIndex(index);
@@ -215,4 +214,6 @@ export const Message = React.memo(
       </div>
     );
   }
-);
+
+
+export default Message;

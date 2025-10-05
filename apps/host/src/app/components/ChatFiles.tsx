@@ -3,10 +3,9 @@ import useSWR from "swr";
 import { Doc, Picture } from "./icons";
 import { getChatFiles } from "../services/chats";
 import { useChatStore } from "../store/chats.store";
+import { Message } from "../types/types";
 
-type Props = {};
-
-export const ChatFiles = (props: Props) => {
+export const ChatFiles = () => {
   const { currentChat } = useChatStore();
 
   const { data, error, isValidating } = useSWR(
@@ -35,7 +34,7 @@ export const ChatFiles = (props: Props) => {
         ) : files.length === 0 ? (
           <p className="text-[#A0A4A6] text-sm">No files yet</p>
         ) : (
-          files.slice(0, 6).map((fileMessage: any) => {
+          files.slice(0, 6).map((fileMessage: Message) => {
             const fileType = fileMessage.fileType || "image";
             const name = fileMessage.fileName || fileMessage.file || "file";
             const size = fileMessage.fileSize

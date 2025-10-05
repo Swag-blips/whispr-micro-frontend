@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Phone, Video, Plus, EllipsisVertical, X } from "lucide-react";
+import { Phone, Video,  EllipsisVertical, X } from "lucide-react";
 import { Chats, User } from "../types/types";
 import { getAvatar } from "../utils/getUserAvatar";
 import { useEffect, useState } from "react";
@@ -37,7 +37,7 @@ export const ChatHeader = ({ currentChat }: Props) => {
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [selectedToRemove, setSelectedToRemove] = useState<string[]>([]);
   const [isRemoving, setIsRemoving] = useState(false);
-  const [loadingMembers, setLoadingMembers] = useState(false);
+  const [loadingMembers] = useState(false);
   const { user } = useAuth();
 
   const { onlineUsers, socket } = useSocket();
@@ -61,11 +61,7 @@ export const ChatHeader = ({ currentChat }: Props) => {
     getFriends
   );
 
-  const handleEllipsisClick = () => {
-    if (currentChat.type === "group") {
-      setShowDetails((prev) => !prev);
-    }
-  };
+
 
   const handleSaveDetails = async () => {
     try {
