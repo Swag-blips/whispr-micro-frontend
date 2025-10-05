@@ -2,45 +2,64 @@ import { useEffect, useState } from "react";
 import { User } from "../types/types";
 import { useSocket } from "../context/SocketContext";
 import { useChatStore } from "../store/chats.store";
+import { useAuth } from "../context/AuthContext";
 
 export const useTypingIndicator = () => {
   const [userTyping, setUserTyping] = useState<User | User[] | null>(null);
   const { socket } = useSocket();
   const { currentChat } = useChatStore();
+  const { user:authUser } = useAuth();
+
   useEffect(() => {
-    socket?.on("userTyping", (data: { chatId: string; userId: string }) => {
-      console.log("DATA", data);
+    const handleUserTyping = (data: { chatId: string; userId: string }) => {
+      console.log("USER TYPING", data, currentChat);
       if (data.chatId !== currentChat?._id) return;
+
+      if (data.userId === authUser?._id) return;
 
       const user = Array.isArray(currentChat?.otherUsers)
-        ? currentChat.otherUsers.find((user) => data.userId === user._id)
+        ? currentChat.otherUsers.find((u) => u._id === data.userId)
         : currentChat?.otherUsers;
 
-      if (!user) return;
-      setUserTyping(user);
-    });
+      console.log("got to user", user);
 
-    socket?.on("stopTyping", (data: { chatId: string; userId: string }) => {
+      if (!user) return;
+
+      setUserTyping((prev) => {
+        if (!prev) return [user];
+        if (Array.isArray(prev)) {
+          if (prev.some((u) => u._id === user._id)) return prev;
+          return [...prev, user];
+        }
+        return [prev, user];
+      });
+    };
+
+    const handleStopTyping = (data: { chatId: string; userId: string }) => {
       if (data.chatId !== currentChat?._id) return;
 
-      if (Array.isArray(userTyping)) {
-        const userTypingCopy = [...userTyping];
+      setUserTyping((prev) => {
+        if (!prev) return null;
+        if (Array.isArray(prev)) {
+          const filtered = prev.filter((u) => u._id !== data.userId);
+          return filtered.length > 0 ? filtered : null;
+        }
+        return prev._id === data.userId ? null : prev;
+      });
+    };
 
-        const filteredUserTyping = userTypingCopy.filter(
-          (user) => user._id !== data.userId
-        );
-
-        setUserTyping(filteredUserTyping);
-      } else {
-        setUserTyping(null);
-      }
+    socket?.on("userTyping", (data) => {
+      console.log("receive event");
+      handleUserTyping(data);
     });
+    socket?.on("stopTyping", handleStopTyping);
 
     return () => {
-      socket?.off("userTyping");
-      socket?.off("stopTyping");
+      socket?.off("userTyping", handleUserTyping);
+      socket?.off("stopTyping", handleStopTyping);
     };
   }, [socket, currentChat]);
 
+  console.log("userTyping", userTyping);
   return { userTyping };
 };

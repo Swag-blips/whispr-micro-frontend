@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { EmptyChats } from "./EmptyChats";
 import { Loading } from "./icons";
 import { convertTime } from "../utils/convertDate";
+import { GroupChatImage } from "./GroupChatImage";
 
 const Chats = () => {
   const [allUserChats, setAllUserChats] = useState<ChatsType[]>([]);
@@ -140,7 +141,10 @@ const Chats = () => {
               : null;
             return (
               <div
-                onClick={() => setCurrentChat(chat)}
+                onClick={() => {
+                  if (currentChat?._id === chat._id) return;
+                  setCurrentChat(chat);
+                }}
                 key={chat._id}
                 className={`flex cursor-pointer transition-all duration-400 items-center justify-between ${currentChat?._id === chat._id ? "bg-[#181D21] mx-0 p-4" : "mx-4"} `}
               >
@@ -163,9 +167,7 @@ const Chats = () => {
                         )}
                       </div>
                     ) : (
-                      <div className="bg-[#F5F5F5] flex items-center justify-center size-12 rounded-full">
-                        {chat.groupName[0]}
-                      </div>
+                      <GroupChatImage chat={chat} />
                     )}
 
                     <div className="flex flex-col gap-1">

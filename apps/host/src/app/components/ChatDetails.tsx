@@ -1,11 +1,14 @@
-import { X } from "lucide-react";
+import { PencilLine, X } from "lucide-react";
 import React, { useRef } from "react";
 import { useChatStore } from "../store/chats.store";
 import Image from "next/image";
 import { useSocket } from "../context/SocketContext";
-import { Doc, Picture, Star } from "./icons";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ChatFiles } from "./ChatFiles";
+import { StarredMessages } from "./StarredMessages";
+import { GroupChatImage } from "./GroupChatImage";
+import { GroupMembers } from "./GroupMembers";
 
 export const ChatDetails = () => {
   const { currentChat } = useChatStore();
@@ -51,7 +54,7 @@ export const ChatDetails = () => {
     <div className="w-[298px] relative chat-scrollbar  overflow-y-auto bg-[#101516] border-l border-[#232728] h-full">
       <div
         id="chat-header"
-        ref={headerRef} 
+        ref={headerRef}
         className=" sticky top-0 bg-inherit z-50  flex items-center justify-between p-7 border-b border-[#232728]"
       >
         <h2 className="text-white text-2xl font-medium">Chat details</h2>
@@ -94,77 +97,33 @@ export const ChatDetails = () => {
           </div>
         </div>
       ) : (
-        <></>
+        <div className="flex flex-col items-center gap-4 mt-4">
+          <GroupChatImage chat={currentChat} from="messages" />
+
+          <div className="flex items-center gap-2">
+            <h2 className="text-white font-semibold text-2xl">
+              {currentChat.groupName}
+            </h2>
+            <PencilLine color="#A0A4A6" size={16} className="cursor-pointer" />
+          </div>
+        </div>
       )}
 
-      <div className="px-4 mt-8 ">
-        <div className="flex items-center justify-between">
-          <h2 className="font-medium text-white text-2xl">Files</h2>
-          <p className="text-[#CFCFCF]">see all</p>
+      {currentChat.type === "group" && (
+        <div className="flex flex-col text-left gap-2 mx-4 mt-4">
+          <h2 className="text-base font-medium text-white">Details</h2>
+          <p className="text-[#A0A4A6] leading-[150%] xl:text-sm">
+            {currentChat.bio}
+          </p>
         </div>
+      )}
 
-        <div className="flex flex-col py-3 mt-4 gap-6">
-          <div className="flex items-center gap-2">
-            <div className="bg-[#181D21] flex items-center justify-center size-12 rounded-full">
-              <Picture />
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="text-[#EDEDED]">Design.png</p>
-              <p className="text-[#A3A3A3] text-xs">1.2mb • Jul 22, 2025</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="bg-[#181D21] flex items-center justify-center size-12 rounded-full">
-              <Picture />
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="text-[#EDEDED]">Swag.png</p>
-              <p className="text-[#A3A3A3] text-xs">50kb • Jul 30, 2025</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="bg-[#181D21] flex items-center justify-center size-12 rounded-full">
-              <Doc />
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="text-[#EDEDED]">Swag.docx</p>
-              <p className="text-[#A3A3A3] text-xs">8kb • Jul 30, 2025</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {currentChat.type === "group" && <GroupMembers />}
 
-      <div className="mt-8 mx-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-medium text-white text-2xl">Starred messages</h2>
-          <p className="text-[#CFCFCF]">see all</p>
-        </div>
+      {!Array.isArray(currentChat.otherUsers) &&
+        currentChat.type === "private" && <ChatFiles />}
 
-        <div className="flex flex-col mt-4 gap-4">
-          <div className="flex flex-col gap-2">
-            <div className="bg-[#14222B] flex items-center gap-2 rounded-t-lg rounded-bl-lg  px-4 py-3">
-              <Star />
-              <p className="text-white text-xs leading-[150%]  ">
-                Alright, I’ll look in the Trash first. If it’s really gone, I’ll
-                let you know. Appreciate the help
-              </p>
-            </div>
-
-            <p className="text-[10px] ml-auto text-[#A0A4A6]">10:00pm</p>
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="bg-[#1A1F21] flex items-center gap-2 rounded-t-lg rounded-bl-lg  px-4 py-3">
-              <Star />
-
-              <p className="text-white text-xs leading-[150%]  ">
-                Thanks for checking. Could you please share the name of the
-                file, the folder it was in....
-              </p>
-            </div>
-            <p className="text-[10px] ml-auto text-[#A0A4A6]">10:00pm</p>
-          </div>
-        </div>
-      </div>
+      <StarredMessages />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Phone, Video, Plus, EllipsisVertical } from "lucide-react";
+import { Phone, Video,  EllipsisVertical, X } from "lucide-react";
 import { Chats, User } from "../types/types";
 import { getAvatar } from "../utils/getUserAvatar";
 import { useEffect, useState } from "react";
@@ -16,6 +16,11 @@ import useSWR from "swr";
 import { getFriends } from "../services/user";
 import { AxiosError } from "axios";
 import { useSocket } from "../context/SocketContext";
+import { GroupChatImage } from "./GroupChatImage";
+import { AddMemberModal } from "./AddMemberModal";
+import { UserAdd, UserRemove } from "./icons";
+import { RemoveMemberModal } from "./RemoveMemberModal";
+import { useAuth } from "../context/AuthContext";
 
 type Props = {
   currentChat: Chats;
@@ -28,6 +33,12 @@ export const ChatHeader = ({ currentChat }: Props) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedToAdd, setSelectedToAdd] = useState<string[]>([]);
   const [userIsTyping, setUserIsTyping] = useState(false);
+  const [openActionDropdown, setOpenActionDropDown] = useState(false);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [selectedToRemove, setSelectedToRemove] = useState<string[]>([]);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [loadingMembers] = useState(false);
+  const { user } = useAuth();
 
   const { onlineUsers, socket } = useSocket();
 
@@ -50,11 +61,7 @@ export const ChatHeader = ({ currentChat }: Props) => {
     getFriends
   );
 
-  const handleEllipsisClick = () => {
-    if (currentChat.type === "group") {
-      setShowDetails((prev) => !prev);
-    }
-  };
+
 
   const handleSaveDetails = async () => {
     try {
@@ -103,6 +110,37 @@ export const ChatHeader = ({ currentChat }: Props) => {
     }
   };
 
+  // Group members for RemoveMemberModal (exclude current user)
+  const groupMembers = Array.isArray(currentChat.otherUsers)
+    ? currentChat.otherUsers.filter((u: User) => u._id !== user?._id)
+    : [];
+
+  const handleRemoveMembers = async () => {
+    if (selectedToRemove.length === 0) return;
+    setIsRemoving(true);
+    try {
+      for (const memberId of selectedToRemove) {
+        const data = await handleRemoveUser(memberId);
+        if (data?.success) {
+          toast.success("User successfully removed");
+        }
+      }
+      setShowRemoveModal(false);
+      setSelectedToRemove([]);
+      mutate("userChats");
+      setCurrentChat(null);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message || "Failed to remove members");
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
   useEffect(() => {
     if (currentChat.type === "private") return;
     setGroupBio(currentChat.bio);
@@ -110,19 +148,25 @@ export const ChatHeader = ({ currentChat }: Props) => {
   }, [currentChat]);
 
   useEffect(() => {
-    socket?.on("userTyping", (data) => {
-      console.log("DATA", data);
-      if (data.chatId !== currentChat._id) return;
+    const handleUserTyping = (data: { chatId: string, userId:string }) => {
+      if (data.chatId !== currentChat._id || currentChat.type === "group")
+        return;
+      if(data.userId === user?._id) return
       setUserIsTyping(true);
-    });
+    };
 
-    socket?.on("stopTyping", () => {
+    const handleStopTyping = (data: { chatId: string }) => {
+      if (data.chatId !== currentChat._id || currentChat.type === "group")
+        return;
       setUserIsTyping(false);
-    });
+    };
+
+    socket?.on("userTyping", handleUserTyping);
+    socket?.on("stopTyping", handleStopTyping);
 
     return () => {
-      socket?.off("userTyping");
-      socket?.off("stopTyping");
+      socket?.off("userTyping", handleUserTyping);
+      socket?.off("stopTyping", handleStopTyping);
     };
   }, [currentChat, socket]);
 
@@ -148,9 +192,7 @@ export const ChatHeader = ({ currentChat }: Props) => {
                 )}
               </div>
             ) : (
-              <div className="bg-[#F5F5F5] flex items-center justify-center size-12 rounded-full">
-                {currentChat.groupName[0]}
-              </div>
+              <GroupChatImage chat={currentChat} />
             )}
 
             <div className="flex flex-col gap-1">
@@ -187,19 +229,54 @@ export const ChatHeader = ({ currentChat }: Props) => {
             <Phone color="#E2E8F0" fill="#E2E8F0" size={24} />
           </div>
 
-          {currentChat.type === "group" && (
+          <div className="border  relative cursor-pointer border-[#232728] flex items-center justify-center rounded-full size-12">
             <button
-              onClick={() => setShowAddModal(true)}
-              className="bg-[#F5F5F5] rounded-full p-2 flex items-center justify-center"
+              onClick={() =>
+                setOpenActionDropDown(
+                  (prevOpenActionDropdown) => !prevOpenActionDropdown
+                )
+              }
             >
-              <Plus color="#E2E8F0" size={20} />
+              <EllipsisVertical
+                color="#E2E8F0"
+                size={24}
+                className="cursor-pointer"
+              />
             </button>
-          )}
 
-          <div className="border cursor-pointer border-[#232728] flex items-center justify-center rounded-full size-12">
-            <button onClick={handleEllipsisClick}>
-              <EllipsisVertical color="#E2E8F0" size={24} />
-            </button>
+            {openActionDropdown && (
+              <div className="absolute top-15 right-2 border border-[#232728] rounded-xl bg-[#1A1F21] w-[145px]  flex flex-col">
+                {currentChat.type === "group" && (
+                  <>
+                    <div
+                      onClick={() =>
+                        setShowAddModal((prevAddModal) => !prevAddModal)
+                      }
+                      className="flex items-center rounded-t-xl  hover:bg-[#2E3235] border-b border-[#232728] p-2 gap-2"
+                    >
+                      <UserAdd />
+                      <p className="text-xs text-[#D0D3D4]">Add user</p>
+                    </div>
+                    <div
+                      onClick={() =>
+                        setShowRemoveModal(
+                          (prevRemoveModal) => !prevRemoveModal
+                        )
+                      }
+                      className="flex items-center hover:bg-[#2E3235]  border-b border-[#232728] p-2 gap-2"
+                    >
+                      <UserRemove />
+                      <p className="text-xs text-[#D0D3D4]">Remove user</p>
+                    </div>
+                  </>
+                )}
+
+                <div className="flex items-center hover:bg-[#2E3235] rounded-b-xl p-2 gap-2">
+                  <X size={16} className="shrink-0" color="#D0D3D4" />
+                  <p className="text-xs text-[#D0D3D4]">close chat details</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -289,67 +366,27 @@ export const ChatHeader = ({ currentChat }: Props) => {
         </div>
       )}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md relative">
-            <button
-              className="absolute top-3 right-3 text-[#8C8C8C] text-xl"
-              onClick={() => setShowAddModal(false)}
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <h2 className="text-xl font-semibold mb-4">Add Members</h2>
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-3 max-h-40 overflow-y-auto">
-                {loadingFriends ? (
-                  <p>Loading...</p>
-                ) : addableFriends.length === 0 ? (
-                  <p>No friends to add</p>
-                ) : (
-                  addableFriends.map((user: User) => (
-                    <label
-                      key={user._id}
-                      className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-[#F5F5F5]"
-                    >
-                      <Image
-                        src={getAvatar(user.avatar)}
-                        alt={user.username}
-                        width={36}
-                        height={36}
-                        className="rounded-full"
-                      />
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">
-                          {user.username}
-                        </div>
-                        <div className="text-xs text-[#8C8C8C]">{user.bio}</div>
-                      </div>
-                      <input
-                        type="checkbox"
-                        checked={selectedToAdd.includes(user._id)}
-                        onChange={() =>
-                          setSelectedToAdd((prev) =>
-                            prev.includes(user._id)
-                              ? prev.filter((id) => id !== user._id)
-                              : [...prev, user._id]
-                          )
-                        }
-                        className="accent-[#444CE7] w-4 h-4"
-                      />
-                    </label>
-                  ))
-                )}
-              </div>
-              <button
-                className="bg-[#444CE7] text-white rounded-lg py-2 mt-2 font-medium hover:bg-[#373fcf] transition"
-                onClick={handleAddMembers}
-                disabled={selectedToAdd.length === 0 || isAdding}
-              >
-                {isAdding ? "Adding..." : "Add Selected"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <AddMemberModal
+          setShowAddModal={setShowAddModal}
+          addableFriends={addableFriends}
+          selectedToAdd={selectedToAdd}
+          setSelectedToAdd={setSelectedToAdd}
+          handleAddMembers={handleAddMembers}
+          isAdding={isAdding}
+          loadingFriends={loadingFriends}
+        />
+      )}
+
+      {showRemoveModal && (
+        <RemoveMemberModal
+          setShowRemoveModal={setShowRemoveModal}
+          groupMembers={groupMembers}
+          selectedToRemove={selectedToRemove}
+          setSelectedToRemove={setSelectedToRemove}
+          handleRemoveMembers={handleRemoveMembers}
+          isRemoving={isRemoving}
+          loadingMembers={loadingMembers}
+        />
       )}
     </>
   );

@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useAuth } from "./AuthContext";
+import { useChatStore } from "../store/chats.store";
 
 interface SocketContext {
   socket: Socket | null;
@@ -25,6 +26,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
   const { user } = useAuth();
+  const { currentChat } = useChatStore();
+  console.log("CURRENTCHAT", currentChat);
 
   useEffect(() => {
     if (user) {
@@ -32,14 +35,16 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         query: {
           userId: user._id,
         },
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
       });
 
       socketRef.current = socket;
       setConnected(true);
 
-      socket.on("getOnlineUsers", (users) => {
-        setOnlineUsers(users);
-      });
+     
 
       socket.on("connect_error", (err: Error) => {
         console.log(err.message);
@@ -53,7 +58,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       socketRef.current?.disconnect();
       setConnected(false);
-      socketRef.current = null;
+      socketRef.current = null; 
     }
   }, [user]);
 
@@ -64,6 +69,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       setOnlineUsers(parsedData || []);
     });
   }, [user, socketRef]);
+
+  console.log("onlineUsers", onlineUsers);
 
   return (
     <SocketContext.Provider
